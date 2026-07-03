@@ -1,0 +1,35 @@
+{
+  "name": "darijacode",
+  "version": "0.1.0",
+  "description": "A new programming languages based on Moroccan words to let people on morocco learn programming fast without need to english or learn advanced concepts",
+  "keywords": [
+    "DarijaCode",
+    "programming",
+    "language",
+    "morocco"
+  ],
+  "homepage": "https://github.com/krnl0xsns1nk/DarijaCode#readme",
+  "bugs": {
+    "url": "https://github.com/krnl0xsns1nk/DarijaCode/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krnl0xsns1nk/DarijaCode.git"
+  },
+  "license": "ISC",
+  "author": "krnl0xsns1nk",
+  "type": "commonJs",
+  "main": "cli.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/cli.js",
+    "dev": "ts-node src/cli.ts",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "typescript": "^6.0.3"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  }
+}
