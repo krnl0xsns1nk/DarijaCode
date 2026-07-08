@@ -16,8 +16,15 @@ ${node.body.map((stmt: any) => "    " + this.gen(stmt)).join("\n")}
     return 0;
 }`;
 
-      case "printStmt":
-        return `printf("${node.value}");`;
+case "printStmt":
+  const escaped = node.value
+    .replace(/\\/g, '\\\\')  // escape backslashes first
+    .replace(/"/g, '\\"')    // escape quotes
+    .replace(/%/g, '%%')     // escape % for printf
+    .replace(/\n/g, '\\n')   // convert real newline to \n literal
+    .replace(/\r/g, '\\r');  // handle \r too
+
+  return `printf("${escaped}\\n");`;
 
       default:
       // @ts-expect-error

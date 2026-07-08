@@ -13,8 +13,10 @@ export enum TokenType {
 }
 
 export type Token = {
-  type: TokenType
+  type: TokenType;
   value: string;
+  line: number;
+  column: number;
 }; 
 
 export type PrintStmt = {
@@ -26,6 +28,15 @@ export type Program = {
   type: "program";
   body: Stmt[];
 };
+
+export const display: Partial<Record<TokenType, string>> = {
+  [TokenType.LPAREN]: "(",
+  [TokenType.RPAREN]: ")",
+  [TokenType.STRING]: "\"text\"",
+  [TokenType.IDENTF]: "smiya-dl-mutaghayer",
+  [TokenType.KTEB]: "kteb",
+};
+
 
 export type Stmt = PrintStmt | Program
 

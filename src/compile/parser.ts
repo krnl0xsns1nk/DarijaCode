@@ -2,21 +2,23 @@ import {
   type Token,
   TokenType,
   Stmt,
-  PrintStmt
-} from "./tokens"
+  PrintStmt,
+  display
+} from "./tokens";
+import { CompileError } from "../cli";
 
 export class parser {
   constructor(tokens: Token[]){
-
     this.tokens = tokens;
   };
   private tokens: Token[] = [];
   private cusror: number = 0;
-  private that(){
-    return this.tokens[this.cusror];
+  private that(n: number = 0){
+    return this.tokens[this.cusror + n];
   };
-  private type(){
-    return this.that().type;
+  private type(n: number = 0){
+    console.log(JSON.stringify(this.that()))
+    return this.that(n).type;
   }
   /*
   private value(){
@@ -25,10 +27,16 @@ export class parser {
   private move(){
     return this.tokens[this.cusror++]
   }
-  private expect(typ: TokenType){
-
+  private expect(typ: TokenType, hint:string){
     if(!this.that() || this.type() !== typ){
-      throw new Error(`tw9a3na type ${TokenType[typ]} wlkin l9ina ${TokenType[this.type()]}`)
+      throw new CompileError(
+        `tw9a3na ${display[typ]} wlkin l9ina ${display[this.type()]}`,
+        this.that().line,
+        this.that().column,
+        `jrb : ${display[this.type(-2)]}${display[this.type(-1)]}${display[typ]}
+tari9a S7i7a : ${hint}
+        `
+      )
     } 
 
     return this.move()
@@ -36,18 +44,17 @@ export class parser {
   private stmts: Stmt[] = []
   private program(stmt: Stmt[]): Stmt{
 
-    console.log("final")
     return {
       type: "program",
       body: stmt
     }
   }
   private printStmt(): PrintStmt {
-
-    this.expect(TokenType.KTEB)
-    this.expect(TokenType.LPAREN);
-    const value = this.expect(TokenType.STRING);
-    this.expect(TokenType.RPAREN);
+    const hint: string = 'kteb("chi haja")'
+    this.expect(TokenType.KTEB, hint)
+    this.expect(TokenType.LPAREN, hint);
+    const value = this.expect(TokenType.STRING, hint);
+    this.expect(TokenType.RPAREN, hint);
 
     return {
       type: "printStmt",
@@ -55,9 +62,8 @@ export class parser {
     }
   } 
   public create(): Stmt{
-    console.log("hi")
+    console.log("parsing...")
     while (this.tokens.length > this.cusror){
-      console.log("hi2")
 
   switch (this.type()) {
     case TokenType.KTEB:
@@ -68,7 +74,6 @@ export class parser {
       throw new Error(`Unknown statement ${TokenType[this.type()]}`);
   }
     }
-    console.log("reach");
     return this.program(this.stmts)
   }
 }
