@@ -75,21 +75,6 @@ export class lexer {
   public tokenize(): Token[] {
     while (this.code.length > this.cursor){
 
-      console.log(this.that())
-
-        if(this.that() === " " && this.isString){
-          this.wait(TokenType.STRING)
-          this.move();
-          continue
-        }
-        if (this.that() === "\n" && this.isString){
-        throw new CompileError(
-        "Ma tsedatch l string \"text\"",
-        this.line,
-        this.column,
-        `jrb : tzid " `
-        );
-        }
       if(this.that() === "\""){ 
         if(this.isString){
           this.pushWaiter();
@@ -101,34 +86,36 @@ export class lexer {
         continue;
       }
 
+      if (this.isString){
+        if (this.that() === "\n"){
+        throw new CompileError(
+        "Ma tsedatch l string \"text\"",
+        this.line,
+        this.column,
+        `jrb : tzid -> " `
+        );
+        }
+
+        this.wait(TokenType.STRING);
+        this.move();
+        continue;
+      }
+      console.log(this.that())
+
+
       if (symbol.includes(this.that())){
-        if (this.isString){
+       /* if (this.isString){
           this.wait(TokenType.STRING);
           this.move();
           continue;
-        }
+        }*/
         this.pushWaiter();
         const typ: TokenType = symbols[this.that()]
         this.push(typ)
         this.move();
         continue
       }
-/*
-      if(this.that() === "("){
 
-        this.pushWaiter();
-        this.push(TokenType.LPAREN); 
-        this.move();
-        continue 
-      }
-      if (this.that() === ")"){
-        this.pushWaiter();
-        this.push(TokenType.RPAREN)
-        this.move();
-        continue
-      }
-
-*/
       if (isChar(this.that())){
         if (this.isString){
       this.wait(TokenType.STRING)
