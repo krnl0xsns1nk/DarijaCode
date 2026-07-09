@@ -1,5 +1,5 @@
 import  { type Token, TokenType, getKeywordToken } from "./tokens";
-import { CompileError } from "../cli";
+import { CompileError } from "./index";
 const symbol: string[] = ["(", ")"]
 const symbols: Record<string, TokenType> = {
   "(": TokenType.LPAREN,

@@ -5,7 +5,7 @@ import {
   PrintStmt,
   display
 } from "./tokens";
-import { CompileError } from "../cli";
+import { CompileError } from "./index";
 
 export class parser {
   constructor(tokens: Token[]){
