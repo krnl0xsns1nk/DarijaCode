@@ -1,7 +1,5 @@
 
 export enum TokenType {
-  KEYWORD,
-  SYMBOLE,
   IDENTF,
   STRING,
   NUMBER,
@@ -33,6 +31,7 @@ export const display: Partial<Record<TokenType, string>> = {
   [TokenType.LPAREN]: "(",
   [TokenType.RPAREN]: ")",
   [TokenType.STRING]: "\"text\"",
+  [TokenType.NUMBER]: "ra9m",
   [TokenType.IDENTF]: "smiya-dl-mutaghayer",
   [TokenType.KTEB]: "kteb",
 };

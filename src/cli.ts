@@ -4,7 +4,7 @@ import fs from "fs"
 const file = process.argv[2];
 
 if (!file) {
-  console.log("Usage: node src/cli.js file.drj \nOr: node src/cli.ts --help");
+  console.log("Usage: node src/cli.js file.drj");
   process.exit(1);
 }
 

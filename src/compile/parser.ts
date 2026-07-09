@@ -27,17 +27,22 @@ export class parser {
   private move(){
     return this.tokens[this.cusror++]
   }
-  private expect(typ: TokenType, hint:string){
+  private hint: string = '';
+  private expect(typ: TokenType, add?: TokenType){
+    let also = add ? this.type() !== add : false
     if(!this.that() || this.type() !== typ){
+      if (also){
+
       throw new CompileError(
         `tw9a3na ${display[typ]} wlkin l9ina ${display[this.type()]}`,
         this.that().line,
         this.that().column,
         `jrb : ${display[this.type(-2)]}${display[this.type(-1)]}${display[typ]}
-tari9a S7i7a : ${hint}
+${this.hint ? `tari9a S7i7a : ${this.hint}` : ''}
         `
       )
-    } 
+    }
+    }
 
     return this.move()
   }
@@ -51,11 +56,13 @@ tari9a S7i7a : ${hint}
   }
   private printStmt(): PrintStmt {
     const hint: string = 'kteb("chi haja")'
-    this.expect(TokenType.KTEB, hint)
-    this.expect(TokenType.LPAREN, hint);
-    const value = this.expect(TokenType.STRING, hint);
-    this.expect(TokenType.RPAREN, hint);
+    this.hint = hint;
+    this.expect(TokenType.KTEB)
+    this.expect(TokenType.LPAREN);
+    const value = this.expect(TokenType.STRING, TokenType.NUMBER);
+    this.expect(TokenType.RPAREN);
 
+    this.hint = ''
     return {
       type: "printStmt",
       value: value.value

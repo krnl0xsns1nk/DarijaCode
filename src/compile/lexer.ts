@@ -8,8 +8,16 @@ const symbols: Record<string, TokenType> = {
 const isChar = (char: string): boolean => {
   return char.toUpperCase() !== char.toLowerCase()
 }
+const isNumber = (c: string): boolean => {
+  const numbers: Record<string, boolean> = {
+    "0": true, "1": true, "2": true, "3": true, 
+    "4": true, "5": true, "6": true, "7": true,
+    "8": true, "9": true
+  }
+  return numbers[c] ?? false
+}
 interface WordType  {
-  type: TokenType.IDENTF | TokenType.STRING;
+  type: TokenType.IDENTF | TokenType.STRING | TokenType.NUMBER;
   value: string,
 }
 export class lexer {
@@ -24,7 +32,7 @@ export class lexer {
   }
   private reset(){
     this.waiting = {type: TokenType.IDENTF, value: ''}
-    this.isString = false;
+    this.tokenMode = TokenType.IDENTF
   }
   private move() {
     const current = this.code[this.cursor++];
@@ -41,11 +49,16 @@ export class lexer {
   private pushWaiter(){
     const { value } = this.waiting;
     if (value.length < 1) return
+      let typ: TokenType;
+      if(this.waiting.type === TokenType.NUMBER){
+        typ = this.waiting.type;
+      } else {
+        typ = this.tokenMode === TokenType.STRING ? 
+        TokenType.STRING : getKeywordToken(value)
+      }
 
-      const type = this.isString ? TokenType.STRING : getKeywordToken(value)
-
-      this.tokens.push({type, value, line: this.line, column: this.column})
-      console.log(`pushing : ${value} as ${TokenType[type]}`)
+      this.tokens.push({type: typ, value, line: this.line, column: this.column})
+      console.log(`pushing : ${value} as ${TokenType[typ]}`)
 
       this.reset();
     }
@@ -57,16 +70,16 @@ export class lexer {
     this.reset();
   }
 
-  private wait(typ: TokenType.IDENTF | TokenType.STRING){
+  private wait(typ: TokenType.IDENTF | TokenType.STRING | TokenType.NUMBER){
 
     console.log(`waiting : ${this.waiting.value} as ${TokenType[this.waiting.type]}`)
 
-    if (typ === TokenType.STRING){ this.isString = true; }
+    if (typ === TokenType.STRING){ this.tokenMode = TokenType.STRING}
     this.waiting.type = typ;
     this.waiting.value += this.that() === "\"" ? '' : this.that();
 //    
   }
-  private isString: boolean = false;
+  private tokenMode: TokenType = TokenType.IDENTF;
 
   constructor(code: string){
     this.code = code.trim()
@@ -75,8 +88,9 @@ export class lexer {
   public tokenize(): Token[] {
     while (this.code.length > this.cursor){
 
+      console.log(this.that())
       if(this.that() === "\""){ 
-        if(this.isString){
+        if(this.tokenMode === TokenType.STRING){
           this.pushWaiter();
           this.move();
           continue;
@@ -86,7 +100,7 @@ export class lexer {
         continue;
       }
 
-      if (this.isString){
+      if (this.tokenMode === TokenType.STRING){
         if (this.that() === "\n"){
         throw new CompileError(
         "Ma tsedatch l string \"text\"",
@@ -100,15 +114,9 @@ export class lexer {
         this.move();
         continue;
       }
-      console.log(this.that())
 
 
       if (symbol.includes(this.that())){
-       /* if (this.isString){
-          this.wait(TokenType.STRING);
-          this.move();
-          continue;
-        }*/
         this.pushWaiter();
         const typ: TokenType = symbols[this.that()]
         this.push(typ)
@@ -116,12 +124,20 @@ export class lexer {
         continue
       }
 
+      if (isNumber(this.that())){
+        this.tokenMode = TokenType.NUMBER;
+        this.wait(TokenType.NUMBER);
+        this.move();
+        continue;
+      }
+
+
       if (isChar(this.that())){
-        if (this.isString){
+/*        if (this.tokenMode === TokenType.STRING){
       this.wait(TokenType.STRING)
       this.move();
       continue;  
-    }
+    }*/
       this.wait(TokenType.IDENTF); 
     this.move();
     continue;
