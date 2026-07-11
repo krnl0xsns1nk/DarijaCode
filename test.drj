@@ -1,0 +1,8 @@
+kteb("hello, world !");
+dir creator = "krnl0xsns1nk";
+
+dwr (dir i=0; i < 10; i++){
+  kteb("this is the creator :" + creator);
+  }
+kteb("safi sala lprogram !");
+
