@@ -5,7 +5,7 @@ import {
   FunctionDeclaration,
   BlockStatement,
 } from "./ast";
-
+import { DarijaError } from "./errors";
 // NOTE: this targets the statically-typed core only. DarijaCode's dynamic
 // `dir` (reassigning across types with no annotation, see about.md) needs a
 // tagged runtime value (DjValue) to compile correctly — not implemented
@@ -19,7 +19,16 @@ import {
 
 export class CodegenError extends Error {
   constructor(message: string, line: number, column: number) {
-    super(`DarijaCode Codegen Error: ${message} at ${line}:${column}`);
+    super();
+    throw new DarijaError({
+  code: "DCE-0",
+  stage: "codegen",
+  message: `DarijaCode Codegen Error: ${message} at ${line}:${column}`,
+  location: {
+    line: line,
+    column: column
+  }
+}) 
   }
 }
 
@@ -62,7 +71,6 @@ export class Codegen {
   private functions = new Map<string, FunctionSig>();
   private out: string[] = [];
   private indentLevel = 0;
-
   public generate(program: Program): string {
     const functionDecls = program.body.filter(
       (s): s is FunctionDeclaration => s.type === "FunctionDeclaration",
@@ -153,7 +161,7 @@ export class Codegen {
 
       case "FunctionDeclaration":
         // handled at the top level; nested function declarations aren't supported yet
-        throw new CodegenError("nested functions are not supported yet", stmt.pos.line, stmt.pos.column);
+        throw new CodegenError("ddawal lmtad5lin mmd3ominch l7ad sa3a", stmt.pos.line, stmt.pos.column);
 
       case "ReturnStatement":
         this.emit(stmt.argument ? `return ${this.genExpression(stmt.argument, scope)};` : "return;");
@@ -315,7 +323,7 @@ export class Codegen {
 
       case "ArrayExpression":
         throw new CodegenError(
-          "l9yam dyal lmasfofat mmd3ominch bchakl kaml l7d sa3a",
+          "l9yam dyal lmasfofat mmd3ominch bchakl kaaml l7d sa3a",
           expr.pos.line,
           expr.pos.column,
         );

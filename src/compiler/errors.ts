@@ -1,52 +1,74 @@
-import { codeFrameColumns } from "@babel/code-frame";
-
-// A single error shape shared by the lexer, parser, checker, and codegen,
-// so the CLI only needs one formatter. checker.ts and codegen.ts currently
-// throw their own local CheckerError/CodegenError — swap those to throw
-// DarijaCodeError instead when it's time to wire this in.
-
 export type ErrorStage = "lexer" | "parser" | "checker" | "codegen";
 
-export class DarijaCodeError extends Error {
+export interface ErrorLocation {
+  line: number;
+  column: number;
+}
+
+export class DarijaError extends Error {
   public readonly stage: ErrorStage;
-  public readonly line: number;
-  public readonly column: number;
+  public readonly code: string;
+  public readonly location: ErrorLocation;
   public readonly hint?: string;
 
-  constructor(stage: ErrorStage, message: string, line: number, column: number, hint?: string) {
-    super(message);
-    this.stage = stage;
-    this.line = line;
-    this.column = column;
-    this.hint = hint;
+  constructor(options: {
+    stage: ErrorStage;
+    code: string;
+    message: string;
+    location: ErrorLocation;
+    hint?: string;
+  }) {
+    super(options.message);
+    this.name = "DarijaError";
+    this.stage = options.stage;
+    this.code = options.code;
+    this.location = options.location;
+    this.hint = options.hint;
   }
 }
 
-export interface FormatOptions {
-  color?: boolean; // highlightCode in @babel/code-frame
-}
+const colors = {
+  red: "\x1b[31m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[36m",
+  gray: "\x1b[90m",
+  reset: "\x1b[0m",
+};
+export function printDarijaError(
+  err: DarijaError,
+  file: string,
+  source: string
+) {
+  const { stage, code, location, message, hint } = err;
 
-export function formatError(error: DarijaCodeError, source: string, options: FormatOptions = {}): string {
-  const location = { start: { line: error.line, column: error.column } };
+  console.error(
+    `${colors.red}DarijaCode error${colors.reset}[${colors.gray}${stage}:${code}${colors.reset}] ${message}`
+  );
 
-  let frame = "";
-  try {
-    frame = codeFrameColumns(source, location, {
-      highlightCode: options.color ?? true,
-    });
-  } catch {
-    frame = "";
+  console.error(
+    `${colors.gray}-->${colors.reset} ${file}:${location.line}:${location.column}`
+  );
+
+  if (source) {
+    const lines = source.split("\n");
+    const line = lines[location.line - 1];
+
+    if (line) {
+      console.error(
+        `${colors.blue}${location.line} |${colors.reset} ${line}`
+      );
+
+      console.error(
+        `${colors.blue}  |${colors.reset} ` +
+        " ".repeat(location.column - 1) +
+        `${colors.red}^${colors.reset}`
+      );
+    }
   }
 
-  const parts = [`DarijaCode Error:`, frame, error.message];
-  if (error.hint) parts.push("", `jrb : ${error.hint}`);
-
-  return parts.filter((part) => part !== "").join("\n");
+  if (hint) {
+    console.error(
+      `${colors.yellow}jrb/chof${colors.reset}: ${hint}`
+    );
+  }
 }
-
-export function wrapUnknown(error: unknown, stage: ErrorStage): DarijaCodeError {
-  if (error instanceof DarijaCodeError) return error;
-  const message = error instanceof Error ? error.message : String(error);
-  return new DarijaCodeError(stage, message, 1, 1);
-}
-

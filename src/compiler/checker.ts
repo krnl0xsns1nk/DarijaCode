@@ -7,7 +7,7 @@ import {
   Param,
   BlockStatement,
 } from "./ast";
-import { DarijaCodeError } from "./errors";
+import { DarijaError } from "./errors";
 
 // NOTE: classes, member/index type tracking, and the stdlib (kteb aside)
 // are not covered here yet — none of that is emitted by the parser yet
@@ -30,7 +30,16 @@ class Scope {
 
   declare(name: string, info: VarInfo, line: number, column: number) {
     if (this.vars.has(name)) {
-      throw new DarijaCodeError("checker", `'${name}' dija mdeclaria`, line, column);
+      throw new DarijaError({
+  code: "DCE13",
+  stage: "checker",
+  message: `'${name}' dija mdeclaria`,
+  location: {
+    line,
+    column,
+  },
+  hint: "",
+});
     }
     this.vars.set(name, info);
   }
@@ -51,7 +60,6 @@ export class Checker {
   private functions = new Map<string, FunctionInfo>();
   private loopDepth = 0;
   private functionStack: FunctionInfo[] = [];
-
   public check(program: Program) {
     // Pass 1: hoist function signatures so calls can appear before the
     // declaration in source order (and so recursion always works).
@@ -69,7 +77,16 @@ export class Checker {
 
   private registerFunction(fn: FunctionDeclaration) {
     if (this.functions.has(fn.name)) {
-      throw new DarijaCodeError("checker", `dala '${fn.name}' dija mdeclaria`, fn.pos.line, fn.pos.column);
+        throw new DarijaError({
+  code: "DCE13",
+  stage: "checker",
+  message: `dala '${fn.name}' dija mdeclaria`,
+  location: {
+        line: fn.pos.line,
+    column: fn.pos.column,
+  },
+  hint: '',
+});
     }
     this.functions.set(fn.name, { params: fn.params, returnType: fn.returnType });
   }
@@ -83,16 +100,29 @@ export class Checker {
       case "ReturnStatement": {
         const fn = this.functionStack[this.functionStack.length - 1];
         if (!fn) {
-          throw new DarijaCodeError("checker", "'raj3' mst5dma bra dyal ddalla", stmt.pos.line, stmt.pos.column);
+          throw new DarijaError({
+  code: "DCE14",
+  stage: "checker",
+  message: "'raj3' mst5dma bra dyal ddalla",
+  location: {
+        line: stmt.pos.line,
+    column: stmt.pos.column,
+  },
+  hint: '',
+});
         }
         if (stmt.argument) {
           const argType = this.inferType(stmt.argument, scope);
           if (fn.returnType && !this.compatible(fn.returnType, argType)) {
-            throw new DarijaCodeError("checker", 
-              `twa93n ${fn.returnType}, wlkin l9ina ${argType}`,
-              stmt.pos.line,
-              stmt.pos.column,
-            );
+            throw new DarijaError({
+  code: "DCE15",
+  stage: "checker",
+  message: `twa93n ${fn.returnType}, wlkin l9ina ${argType}`,
+  location: {
+        line: stmt.pos.line,
+    column: stmt.pos.column,
+  }
+});
           }
         }
         return;
@@ -132,12 +162,28 @@ export class Checker {
       }
       case "BreakStatement":
         if (this.loopDepth === 0) {
-          throw new DarijaCodeError("checker", "'qta3' mst5dma bra dyal dwara", stmt.pos.line, stmt.pos.column);
+        throw new DarijaError({
+  code: "DCE14",
+  stage: "checker",
+  message: "'qta3' mst5dma bra dyal dwara",
+  location: {
+        line: stmt.pos.line,
+    column: stmt.pos.column,
+  }
+});
         }
         return;
       case "ContinueStatement":
         if (this.loopDepth === 0) {
-          throw new DarijaCodeError("checker", "'kml' mst5dma bra by dwara", stmt.pos.line, stmt.pos.column);
+        throw new DarijaError({
+  code: "DCE14",
+  stage: "checker",
+  message: "'kml' mst5dma bra by dwara",
+  location: {
+        line: stmt.pos.line,
+    column: stmt.pos.column,
+  }
+});
         }
         return;
       case "BlockStatement":
@@ -149,11 +195,15 @@ export class Checker {
         this.inferType(stmt.expression, scope);
         return;
       default:
-        throw new DarijaCodeError("checker", 
-          `'${stmt.type}' mmd3omach hna`,
-          stmt.pos.line,
-          stmt.pos.column,
-        );
+        throw new DarijaError({
+  code: "DCE1",
+  stage: "checker",
+  message: `'${stmt.type}' mmd3omach hna`,
+  location: {
+        line: stmt.pos.line,
+    column: stmt.pos.column,
+  }
+});
     }
   }
 
@@ -163,18 +213,30 @@ export class Checker {
     if (decl.init) {
       const initType = this.inferType(decl.init, scope);
       if (decl.typeAnnotation && !this.compatible(decl.typeAnnotation, initType)) {
-        throw new DarijaCodeError("checker", 
-          `twa93na ${decl.typeAnnotation}, wlkin l9ina ${initType}`,
-          decl.pos.line,
-          decl.pos.column,
-        );
+        throw new DarijaError({
+  code: "DCE15",
+  stage: "checker",
+  message: `twa93na ${decl.typeAnnotation}, wlkin l9ina ${initType}`,
+  location: {
+        line: decl.pos.line,
+    column: decl.pos.column,
+  }
+});
       }
       // Only lock the variable to a concrete type when the user asked for
       // that with an explicit annotation. Without one, `dir` stays dynamic
       // (UNKNOWN) so later reassignment to a different type is allowed —
       // see about.md, "Flexibility over restrictions".
     } else if (decl.kind === "khli") {
-      throw new DarijaCodeError("checker", `'${decl.name}' howa tabit idan khaso 9ima`, decl.pos.line, decl.pos.column);
+      throw new DarijaError({
+  code: "DCE16",
+  stage: "checker",
+  message: `'${decl.name}' howa tabit idan khaso 9ima`,
+  location: {
+        line: decl.pos.line,
+    column: decl.pos.column,
+  }
+});
     }
 
     scope.declare(decl.name, { kind: decl.kind, type }, decl.pos.line, decl.pos.column);
@@ -190,11 +252,15 @@ export class Checker {
       if (param.defaultValue && param.typeAnnotation) {
         const defaultType = this.inferType(param.defaultValue, fnScope);
         if (!this.compatible(param.typeAnnotation, defaultType)) {
-          throw new DarijaCodeError("checker", 
-            `twa93na ${param.typeAnnotation}, wlkin l9ina ${defaultType}`,
-            param.pos.line,
-            param.pos.column,
-          );
+          throw new DarijaError({
+  code: "DCE15",
+  stage: "checker",
+  message: `twa93na ${param.typeAnnotation}, wlkin l9ina ${defaultType}`,
+  location: {
+        line: param.pos.line,
+    column: param.pos.column
+  }
+});
         }
       }
       fnScope.declare(
@@ -242,7 +308,15 @@ export class Checker {
       case "Identifier": {
         const info = scope.resolve(expr.name);
         if (!info) {
-          throw new DarijaCodeError("checker", `'${expr.name}' mm3rofach`, expr.pos.line, expr.pos.column);
+          throw new DarijaError({
+  code: "DCE1",
+  stage: "checker",
+  message: `'${expr.name}' mm3rofach`,
+  location: {
+        line: expr.pos.line,
+    column: expr.pos.column,
+  },
+});
         }
         return info.type;
       }
@@ -252,21 +326,37 @@ export class Checker {
         if (expr.target.type === "Identifier") {
           const info = scope.resolve(expr.target.name);
           if (!info) {
-            throw new DarijaCodeError("checker", `'${expr.target.name}' mm3rofch`, expr.pos.line, expr.pos.column);
+            throw new DarijaError({
+  code: "DCE1",
+  stage: "checker",
+  message: `'${expr.target.name}' mm3rofch`,
+  location: {
+        line: expr.pos.line,
+    column: expr.pos.column
+  }
+});
           }
           if (info.kind === "khli") {
-            throw new DarijaCodeError("checker", 
-              `mat9drh t3ti 9ima l '${expr.target.name}', la79ach how tabit (khli)`,
-              expr.pos.line,
-              expr.pos.column,
-            );
+            throw new DarijaError({
+  code: "DCE16",
+  stage: "checker",
+  message: `mat9drh t3ti 9ima l '${expr.target.name}', la79ach how tabit (khli)`,
+  location: {
+        line: expr.pos.line,
+    column: expr.pos.column
+  }
+});
           }
           if (info.type !== UNKNOWN && !this.compatible(info.type, valueType)) {
-            throw new DarijaCodeError("checker", 
-              `twa93na ${info.type}, wlkin l9ina ${valueType}`,
-              expr.pos.line,
-              expr.pos.column,
-            );
+            throw new DarijaError({
+  code: "DCE15",
+  stage: "checker",
+  message: `twa93na ${info.type}, wlkin l9ina ${valueType}`,
+  location: {
+        line: expr.pos.line,
+    column: expr.pos.column
+  }
+});
           }
         } else {
           this.inferType(expr.target, scope);
@@ -321,31 +411,55 @@ export class Checker {
 
       case "CallExpression": {
         if (expr.callee.type !== "Identifier") {
-          throw new DarijaCodeError("checker", "ghir dawal direct lli md3omim", expr.pos.line, expr.pos.column);
+          throw new DarijaError({
+  code: "DCE-2",
+  stage: "checker",
+  message: "ghir dawal direct lli md3omim",
+  location: {
+        line: expr.pos.line,
+    column: expr.pos.column
+  }
+});
         }
         const fn = this.functions.get(expr.callee.name);
         if (!fn) {
-          throw new DarijaCodeError("checker", `dala '${expr.callee.name}' mm3rofach`, expr.pos.line, expr.pos.column);
+          throw new DarijaError({
+  code: "DCE1",
+  stage: "checker",
+  message: `dala '${expr.callee.name}' mm3rofach`,
+  location: {
+        line: expr.pos.line,
+    column: expr.pos.column
+  }
+});
         }
 
         const required = fn.params.filter((p) => !p.defaultValue).length;
         if (expr.args.length < required || expr.args.length > fn.params.length) {
-          throw new DarijaCodeError("checker", 
-            `'${expr.callee.name}' twa93 ${required === fn.params.length ? required : `${required}-${fn.params.length}`} dyal lhojaj, wlkin l9a ${expr.args.length}`,
-            expr.pos.line,
-            expr.pos.column,
-          );
+          throw new DarijaError({
+  code: "DCE17",
+  stage: "checker",
+  message: `'${expr.callee.name}' twa93 ${required === fn.params.length ? required : `${required}-${fn.params.length}`} dyal lhojaj, wlkin l9a ${expr.args.length}`,
+  location: {
+        line: expr.pos.line,
+    column: expr.pos.column
+  }
+});
         }
 
         expr.args.forEach((arg, i) => {
           const argType = this.inferType(arg, scope);
           const param = fn.params[i];
           if (param.typeAnnotation && !this.compatible(param.typeAnnotation, argType)) {
-            throw new DarijaCodeError("checker", 
-              `twa93na ${param.typeAnnotation}, wlkin l9ina ${argType}`,
-              expr.pos.line,
-              expr.pos.column,
-            );
+            throw new DarijaError({
+  code: "DCE15",
+  stage: "checker",
+  message: `twa93na ${param.typeAnnotation}, wlkin l9ina ${argType}`,
+  location: {
+        line: expr.pos.line,
+    column: expr.pos.column
+  }
+});
           }
         });
 
@@ -359,17 +473,29 @@ export class Checker {
       }
 
       default:
-        throw new DarijaCodeError("checker", 
-          `'${expr.type}' ba9i mmd3omach`,
-          expr.pos.line,
-          expr.pos.column,
-        );
+        throw new DarijaError({
+  code: "DCE-2",
+  stage: "checker",
+  message: `'${expr.type}' ba9i mmd3omach`,
+  location: {
+        line: expr.pos.line,
+    column: expr.pos.column
+  }
+});
     }
   }
 
   private expectType(actual: string, expected: string, pos: { line: number; column: number }) {
     if (actual !== expected && actual !== UNKNOWN) {
-      throw new DarijaCodeError("checker", `twa93na ${expected}, wlkin l9ina ${actual}`, pos.line, pos.column);
+      throw new DarijaError({
+  code: "DCE15",
+  stage: "checker",
+  message: `twa93na ${expected}, wlkin l9ina ${actual}`,
+  location: {
+    line: pos.line,
+    column: pos.column
+  }
+});
     }
   }
 

@@ -1,5 +1,5 @@
 import { Token, TokenType } from "./tokens";
-
+import { DarijaError } from "./errors";
 const keywords: Record<string, TokenType> = {
   dir: TokenType.DIR,
   khli: TokenType.KHLI,
@@ -35,7 +35,6 @@ export class Lexer {
   private cursor = 0;
   private line = 1;
   private column = 1;
-
   constructor(source: string) {
     this.source = source;
   }
@@ -170,12 +169,12 @@ export class Lexer {
 
         case "&":
           if (this.match("&")) this.simple(TokenType.AND, "&&");
-          else this.error("twa93na &&");
+          else this.error("twa93na &&", "DCE12");
           break;
 
         case "|":
           if (this.match("|")) this.simple(TokenType.OR, "||");
-          else this.error("twa93na ||");
+          else this.error("twa93na ||", "DCE12");
           break;
 
         case ".":
@@ -195,7 +194,7 @@ export class Lexer {
           break;
 
         default:
-          this.error(`7arf mam3rofch '${char}'`);
+          this.error(`7arf mam3rofch '${char}'`, "DCE1");
       }
     }
 
@@ -242,8 +241,10 @@ export class Lexer {
   }
 
   private readString(quote: string) {
-    const line = this.line;
-    const column = this.column;
+    const start = {
+  line: this.line,
+  column: this.column
+};
     this.advance();
     let value = "";
 
@@ -266,12 +267,17 @@ export class Lexer {
       }
     }
 
-    if (this.isEnd()) {
-      this.error("nass mamkmolch");
+      if (this.isEnd()) {
+  this.error(
+    "nass mamkmolch",
+    "DCE11",
+    "bhal haka -> \"wafin, al3alam !\"",
+    start
+  );
     }
 
     this.advance();
-    this.add(TokenType.STRING, value, line, column);
+    this.add(TokenType.STRING, value, start.line, start.column);
   }
 
   private simple(type: TokenType, value?: string) {
@@ -288,7 +294,6 @@ export class Lexer {
   }
 
   private add(type: TokenType, value: string, line: number, column: number) {
-    console.log(TokenType[type] + ": " + value);
     this.tokens.push({
       type,
       value,
@@ -328,8 +333,27 @@ export class Lexer {
     return /[a-zA-Z0-9_]/.test(c);
   }
 
-  private error(message: string): never {
-    throw new Error(`${message} at ${this.line}:${this.column}`);
+
+private error(
+  message: string,
+  ecode: string,
+  hint?: string,
+  location = {
+    line: this.line,
+    column: this.column
   }
+): never {
+  throw new DarijaError({
+    code: ecode,
+    stage: "lexer",
+    message,
+    location,
+    hint: hint ?? ""
+  });
 }
+
+}
+
+
+
 

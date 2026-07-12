@@ -1,4 +1,5 @@
 import { Token, TokenType } from "./tokens";
+import { DarijaError } from "./errors";
 import {
   Program,
   Statement,
@@ -24,6 +25,10 @@ import {
 // NOTE: `dwr (item in array)` and `dwr (index, value of items)` are not
 // implemented yet either — the lexer has no IN/OF tokens. Only the
 // classic C-style `dwr (init; condition; update)` form is supported.
+
+const masofa = "mosfofa[hoja1, hoja2, hoja3]";
+
+
 
 export class Parser {
   private tokens: Token[];
@@ -79,7 +84,7 @@ export class Parser {
     const pos = this.pos_();
     this.advance(); // dir | khli
 
-    const name = this.expect(TokenType.IDENTF, "twa93na smya dyal mutaghayer").value;
+    const name = this.expect(TokenType.IDENTF, "twa93na smya dyal mutaghayer", "DCE10").value;
 
     let typeAnnotation: string | null = null;
     if (this.match(TokenType.COLON)) {
@@ -100,10 +105,10 @@ export class Parser {
 
   private typeAnnotation(): string {
     // supports: string | ra9m | bool | ...  and array suffix: ra9m[]
-    let type = this.expect(TokenType.IDENTF, "twa93na smya dyal chi naw3").value;
+    let type = this.expect(TokenType.IDENTF, "twa93na smya dyal chi naw3", "DCE10").value;
     while (this.check(TokenType.LBRACT)) {
       this.advance();
-      this.expect(TokenType.RBRACT, "twa93na ']' mora '[' f naw3");
+      this.expect(TokenType.RBRACT, "twa93na ']' mora '[' f naw3", "DCE3");
       type += "[]";
     }
     return type;
@@ -111,11 +116,11 @@ export class Parser {
 
   private params(): Param[] {
     const params: Param[] = [];
-    this.expect(TokenType.LPAREN, "twa93na '(' 9bal mn lmo3amilat");
+    this.expect(TokenType.LPAREN, "twa93na '(' 9bal mn lmo3amilat", "DCE5");
 
     while (!this.check(TokenType.RPAREN)) {
       const pos = this.pos_();
-      const name = this.expect(TokenType.IDENTF, "twa93na smya llmo3amilat").value;
+      const name = this.expect(TokenType.IDENTF, "twa93na smya llmo3amilat", "DCE10").value;
 
       let typeAnnotation: string | null = null;
       if (this.match(TokenType.COLON)) {
@@ -137,11 +142,11 @@ export class Parser {
       });
 
       if (!this.check(TokenType.RPAREN)) {
-        this.expect(TokenType.COMMA, "twa93nz ',' bin lmo3amilat");
+        this.expect(TokenType.COMMA, "twa93nz ',' bin lmo3amilat", "DCE4");
       }
     }
 
-    this.expect(TokenType.RPAREN, "twa93na ')' mora lmo3amilat");
+    this.expect(TokenType.RPAREN, "twa93na ')' mora lmo3amilat", "DCE5");
     return params;
   }
 
@@ -149,7 +154,7 @@ export class Parser {
     const pos = this.pos_();
     this.advance(); // fn
 
-    const name = this.expect(TokenType.IDENTF, "tw93na smya l ddalla").value;
+    const name = this.expect(TokenType.IDENTF, "tw93na smya l ddalla", "DCE10", "fn smya(){}").value;
     const fnParams = this.params();
 
     let returnType: string | null = null;
@@ -179,18 +184,18 @@ export class Parser {
     const pos = this.pos_();
     this.advance(); // ila
 
-    this.expect(TokenType.LPAREN, "tw93na '(' mora 'ila'");
+    this.expect(TokenType.LPAREN, "tw93na '(' mora 'ila'", "DCE5");
     const condition = this.expression();
-    this.expect(TokenType.RPAREN, "twa93na ')' more chart");
+    this.expect(TokenType.RPAREN, "twa93na ')' more chart", "DCE5");
     const consequent = this.block();
 
     const elseIfs: { condition: Expression; consequent: BlockStatement }[] = [];
     this.skipNewlines();
     while (this.check(TokenType.AWLA)) {
       this.advance();
-      this.expect(TokenType.LPAREN, "twa93na '(' mora 'awla'");
+      this.expect(TokenType.LPAREN, "twa93na '(' mora 'awla'", "DCE5");
       const elseIfCondition = this.expression();
-      this.expect(TokenType.RPAREN, "twa93na ')' mora chart");
+      this.expect(TokenType.RPAREN, "twa93na ')' mora chart", "DCE5");
       const elseIfBody = this.block();
       elseIfs.push({ condition: elseIfCondition, consequent: elseIfBody });
       this.skipNewlines();
@@ -209,9 +214,9 @@ export class Parser {
     const pos = this.pos_();
     this.advance(); // mahd
 
-    this.expect(TokenType.LPAREN, "twa93na '(' mora 'mahd'");
+    this.expect(TokenType.LPAREN, "twa93na '(' mora 'mahd'", "DC5");
     const condition = this.expression();
-    this.expect(TokenType.RPAREN, "twa93na ')' mora chart");
+    this.expect(TokenType.RPAREN, "twa93na ')' mora chart", "DCE5");
     const body = this.block();
 
     return { type: "WhileStatement", condition, body, pos };
@@ -221,7 +226,7 @@ export class Parser {
     const pos = this.pos_();
     this.advance(); // dwr
 
-    this.expect(TokenType.LPAREN, "twa93na '(' mora 'dwr'");
+    this.expect(TokenType.LPAREN, "twa93na '(' mora 'dwr'", "DCE5");
 
     let init: VariableDeclaration | ExpressionStatement | null = null;
     if (!this.check(TokenType.EOS)) {
@@ -236,13 +241,13 @@ export class Parser {
     if (!this.check(TokenType.EOS)) {
       condition = this.expression();
     }
-    this.expect(TokenType.EOS, "twa93na ';' mora chart dyal tdwar");
+    this.expect(TokenType.EOS, "twa93na ';' mora chart dyal tdwar", "DCE2");
 
     let update: Expression | null = null;
     if (!this.check(TokenType.RPAREN)) {
       update = this.expression();
     }
-    this.expect(TokenType.RPAREN, "twa93na ')' mora ljomla dyal 'dwr'");
+    this.expect(TokenType.RPAREN, "twa93na ')' mora ljomla dyal 'dwr'", "DCE5");
 
     const body = this.block();
 
@@ -267,9 +272,9 @@ export class Parser {
     const pos = this.pos_();
     this.advance(); // kteb
 
-    this.expect(TokenType.LPAREN, "twa93na '(' mora 'kteb'");
+    this.expect(TokenType.LPAREN, "twa93na '(' mora 'kteb'", "DCE5", "kteb(chi haja)");
     const argument = this.expression();
-    this.expect(TokenType.RPAREN, "twa93na ')' mora lhoja dyal kteb");
+    this.expect(TokenType.RPAREN, "twa93na ')' mora lhoja dyal kteb", "DCE5", "kteb(chi haja)");
     this.consumeEOS();
 
     return { type: "PrintStatement", argument, pos };
@@ -277,7 +282,7 @@ export class Parser {
 
   private block(): BlockStatement {
     const pos = this.pos_();
-    this.expect(TokenType.LBRACE, "twa93na '{'");
+    this.expect(TokenType.LBRACE, "twa93na '{'", "DCE9", "zid '{'");
     this.skipNewlines();
 
     const body: Statement[] = [];
@@ -286,7 +291,7 @@ export class Parser {
       this.skipNewlines();
     }
 
-    this.expect(TokenType.RBRACE, "twa93na '}'");
+    this.expect(TokenType.RBRACE, "twa93na '}'", "DCE9", "zid '}'");
     return { type: "BlockStatement", body, pos };
   }
 
@@ -329,7 +334,7 @@ export class Parser {
       const pos = this.pos_();
       this.advance();
       const consequent = this.assignment();
-      this.expect(TokenType.COLON, "twa93na ':' f ta3bir chart tolaty");
+      this.expect(TokenType.COLON, "twa93na ':' f ta3bir chart tolaty", "DCE8");
       const alternate = this.assignment();
       return { type: "ConditionalExpression", condition, consequent, alternate, pos };
     }
@@ -462,15 +467,15 @@ export class Parser {
         while (!this.check(TokenType.RPAREN)) {
           args.push(this.expression());
           if (!this.check(TokenType.RPAREN)) {
-            this.expect(TokenType.COMMA, "twa93na ',' bin lhojaj");
+            this.expect(TokenType.COMMA, "twa93na ',' bin lhojaj", "DCE4", masofa);
           }
         }
-        this.expect(TokenType.RPAREN, "twa93na ')' mora lhojaj");
+        this.expect(TokenType.RPAREN, "twa93na ')' mora lhojaj", "DCE5");
         expr = { type: "CallExpression", callee: expr, args, pos };
       } else if (this.check(TokenType.DOT)) {
         const pos = this.pos_();
         this.advance();
-        const property = this.expect(TokenType.IDENTF, "twa93na smya dyal lkhasiya mora '.'").value;
+        const property = this.expect(TokenType.IDENTF, "twa93na smya dyal lkhasiya mora '.'", "DCE7").value;
         expr = {
           type: "MemberExpression",
           object: expr,
@@ -482,7 +487,9 @@ export class Parser {
         const pos = this.pos_();
         this.advance();
         const property = this.expression();
-        this.expect(TokenType.RBRACT, "twa93na ']' mora lfahras");
+        this.expect(TokenType.RBRACT, "twa93na ']' mora lfahras", "DCE3",
+                    "mosfofa[ra9m]"
+                   );
         expr = { type: "MemberExpression", object: expr, property, computed: true, pos };
       } else {
         break;
@@ -522,7 +529,9 @@ export class Parser {
 
     if (this.match(TokenType.LPAREN)) {
       const expr = this.expression();
-      this.expect(TokenType.RPAREN, "twa93na ')' mora tta3bir");
+      this.expect(TokenType.RPAREN, "twa93na ')' mora tta3bir",
+                  "DCE5"
+                 );
       return expr;
     }
 
@@ -531,23 +540,31 @@ export class Parser {
       while (!this.check(TokenType.RBRACT)) {
         elements.push(this.expression());
         if (!this.check(TokenType.RBRACT)) {
-          this.expect(TokenType.COMMA, "twa93na ',' bin l3anasir dyal lmasfofa");
+          this.expect(TokenType.COMMA,
+                      "twa93na ',' bin l3anasir dyal lmasfofa",
+                      "DCE4",
+                      masofa
+                     );
         }
       }
-      this.expect(TokenType.RBRACT, "twa93na ']' mora l3anasir dyal lmasfofa");
+      this.expect(
+        TokenType.RBRACT, 
+        "twa93na ']' mora l3anasir dyal lmasfofa",
+        "DCE3",
+        masofa,
+      );
       return { type: "ArrayExpression", elements, pos };
     }
-
-    this.error(`token mmtw93ach: '${token.value}'`);
+    if (token.value === "\\n"){
+     this.error(`token mmtw93ach: 'star jdid'`, "DCE1");
+    }
+    this.error(`token mmtw93ach: '${token.value}'`, "DCE1");
   }
 
-  // ---------------------------------------------
-  // Helpers
-  // ---------------------------------------------
 
   private consumeEOS() {
     this.skipNewlines();
-    this.expect(TokenType.EOS, "twa93na ';'");
+    this.expect(TokenType.EOS, "twa93na ';'", "DCE2");
   }
 
   private skipNewlines() {
@@ -580,9 +597,9 @@ export class Parser {
     return token;
   }
 
-  private expect(type: TokenType, message: string): Token {
+  private expect(type: TokenType, message: string, ecode: string, hint?: string): Token {
     if (this.check(type)) return this.advance();
-    this.error(message);
+    this.error(message, ecode, hint);
   }
 
   private isEnd(): boolean {
@@ -594,9 +611,18 @@ export class Parser {
     return { line: token.line, column: token.column };
   }
 
-  private error(message: string): never {
-    const token = this.peek();
-    throw new Error(`${message} at ${token.line}:${token.column}`);
-  }
+  private error(message: string, ecode: string, hint?: string): never {
+    const token = this.peek()
+  throw new DarijaError({
+  code: ecode,
+  stage: "parser",
+  message,
+  location: {
+    line: token.line,
+    column: token.column
+  },
+  hint: hint ? hint : ''
+});
+}
 }
 
