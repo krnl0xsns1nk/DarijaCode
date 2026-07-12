@@ -19,20 +19,24 @@
   "license": "ISC",
   "author": "krnl0xsns1nk",
   "type": "commonJs",
-  "main": "cli.js",
+  "main": "compiler/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/cli.js",
+    "start": "node dist/compiler/index.js",
     "dev": "ts-node src/compiler/index.ts",
-    "test": "node --test"
+    "test": "ts-node scripts/test.ts all",
+    "test:update": "ts-node scripts/test.ts all --update",
+    "test:lexer": "ts-node scripts/test.ts lexer",
+    "test:parser": "ts-node scripts/test.ts parser",
+    "test:checker": "ts-node scripts/test.ts checker",
+    "test:compiler": "ts-node scripts/test.ts compiler",
+    "test:runtime": "ts-node scripts/test.ts runtime",
+    "test:errors": "ts-node scripts/test.ts errors"
   },
   "devDependencies": {
     "@types/node": "^26.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3",
     "typescript-language-server": "^5.3.0"
-  },
-  "dependencies": {
-    "@babel/code-frame": "^8.0.0"
   }
 }

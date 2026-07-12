@@ -1,0 +1,3 @@
+dir a = 4;
+dir b = 7;
+kteb(a + b);

@@ -1,0 +1,5 @@
+dir total = 0;
+dwr (i = 1; i <= 5; i++) {
+    total = total + i;
+}
+kteb(total);

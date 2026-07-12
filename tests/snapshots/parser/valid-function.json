@@ -1,0 +1,46 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "FunctionDeclaration",
+      "name": "add",
+      "params": [
+        {
+          "type": "Param",
+          "name": "a",
+          "typeAnnotation": "ra9m",
+          "defaultValue": null,
+          "rest": false
+        },
+        {
+          "type": "Param",
+          "name": "b",
+          "typeAnnotation": "ra9m",
+          "defaultValue": null,
+          "rest": false
+        }
+      ],
+      "returnType": "ra9m",
+      "body": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "ReturnStatement",
+            "argument": {
+              "type": "BinaryExpression",
+              "operator": "+",
+              "left": {
+                "type": "Identifier",
+                "name": "a"
+              },
+              "right": {
+                "type": "Identifier",
+                "name": "b"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "VariableDeclaration",
+      "kind": "dir",
+      "name": "i",
+      "typeAnnotation": null,
+      "init": {
+        "type": "NumericLiteral",
+        "value": 0
+      }
+    },
+    {
+      "type": "WhileStatement",
+      "condition": {
+        "type": "BinaryExpression",
+        "operator": "<",
+        "left": {
+          "type": "Identifier",
+          "name": "i"
+        },
+        "right": {
+          "type": "NumericLiteral",
+          "value": 5
+        }
+      },
+      "body": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "PrintStatement",
+            "argument": {
+              "type": "Identifier",
+              "name": "i"
+            }
+          },
+          {
+            "type": "ExpressionStatement",
+            "expression": {
+              "type": "AssignmentExpression",
+              "operator": "=",
+              "target": {
+                "type": "Identifier",
+                "name": "i"
+              },
+              "value": {
+                "type": "BinaryExpression",
+                "operator": "+",
+                "left": {
+                  "type": "Identifier",
+                  "name": "i"
+                },
+                "right": {
+                  "type": "NumericLiteral",
+                  "value": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

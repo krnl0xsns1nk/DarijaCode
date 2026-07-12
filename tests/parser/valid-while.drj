@@ -1,0 +1,5 @@
+dir i = 0;
+mahd (i < 5) {
+    kteb(i);
+    i = i + 1;
+}

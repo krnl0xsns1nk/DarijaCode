@@ -1,0 +1,55 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "VariableDeclaration",
+      "kind": "dir",
+      "name": "age",
+      "typeAnnotation": null,
+      "init": {
+        "type": "NumericLiteral",
+        "value": 20
+      }
+    },
+    {
+      "type": "IfStatement",
+      "condition": {
+        "type": "BinaryExpression",
+        "operator": ">=",
+        "left": {
+          "type": "Identifier",
+          "name": "age"
+        },
+        "right": {
+          "type": "NumericLiteral",
+          "value": 18
+        }
+      },
+      "consequent": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "PrintStatement",
+            "argument": {
+              "type": "StringLiteral",
+              "value": "Adult"
+            }
+          }
+        ]
+      },
+      "elseIfs": [],
+      "alternate": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "PrintStatement",
+            "argument": {
+              "type": "StringLiteral",
+              "value": "Minor"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

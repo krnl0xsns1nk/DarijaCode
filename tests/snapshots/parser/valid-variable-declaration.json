@@ -1,0 +1,15 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "VariableDeclaration",
+      "kind": "dir",
+      "name": "age",
+      "typeAnnotation": "ra9m",
+      "init": {
+        "type": "NumericLiteral",
+        "value": 20
+      }
+    }
+  ]
+}

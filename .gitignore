@@ -142,12 +142,6 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 
-# my c code folder output
-src/compile/.cCode/
-src/compile/.cCode
-b/
-./b
-./b/
 docs/structure.md
 ./docs/structure.md
 

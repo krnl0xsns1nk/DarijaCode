@@ -1,0 +1,5 @@
+fn square(x: ra9m): ra9m {
+    raj3 x * x;
+}
+
+dir result = square(5);

@@ -1,0 +1,30 @@
+[
+  {
+    "type": "DIR",
+    "value": "dir"
+  },
+  {
+    "type": "IDENTF",
+    "value": "msg"
+  },
+  {
+    "type": "EQUAL",
+    "value": "="
+  },
+  {
+    "type": "STRING",
+    "value": "Salam!"
+  },
+  {
+    "type": "EOS",
+    "value": ";"
+  },
+  {
+    "type": "NEWLINE",
+    "value": "\\n"
+  },
+  {
+    "type": "EOF",
+    "value": ""
+  }
+]

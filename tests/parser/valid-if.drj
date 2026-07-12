@@ -1,0 +1,6 @@
+dir age = 20;
+ila (age >= 18) {
+    kteb("Adult");
+} wla {
+    kteb("Minor");
+}

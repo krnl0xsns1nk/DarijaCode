@@ -1,0 +1,56 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "ForStatement",
+      "init": {
+        "type": "ExpressionStatement",
+        "expression": {
+          "type": "AssignmentExpression",
+          "operator": "=",
+          "target": {
+            "type": "Identifier",
+            "name": "i"
+          },
+          "value": {
+            "type": "NumericLiteral",
+            "value": 0
+          }
+        }
+      },
+      "condition": {
+        "type": "BinaryExpression",
+        "operator": "<",
+        "left": {
+          "type": "Identifier",
+          "name": "i"
+        },
+        "right": {
+          "type": "NumericLiteral",
+          "value": 5
+        }
+      },
+      "update": {
+        "type": "UpdateExpression",
+        "operator": "++",
+        "argument": {
+          "type": "Identifier",
+          "name": "i"
+        },
+        "prefix": false
+      },
+      "body": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "PrintStatement",
+            "argument": {
+              "type": "Identifier",
+              "name": "i"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "type": "DIR",
+    "value": "dir"
+  },
+  {
+    "type": "IDENTF",
+    "value": "age"
+  },
+  {
+    "type": "EQUAL",
+    "value": "="
+  },
+  {
+    "type": "NUMBER",
+    "value": "25"
+  },
+  {
+    "type": "EOS",
+    "value": ";"
+  },
+  {
+    "type": "NEWLINE",
+    "value": "\\n"
+  },
+  {
+    "type": "EOF",
+    "value": ""
+  }
+]

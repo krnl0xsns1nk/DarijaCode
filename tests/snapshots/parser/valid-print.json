@@ -1,0 +1,12 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "PrintStatement",
+      "argument": {
+        "type": "StringLiteral",
+        "value": "Salam, DarijaCode!"
+      }
+    }
+  ]
+}
