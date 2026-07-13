@@ -105,7 +105,7 @@ export class Parser {
 
   private typeAnnotation(): string {
     // supports: string | ra9m | bool | ...  and array suffix: ra9m[]
-    let type = this.expect(TokenType.IDENTF, "twa93na smya dyal chi naw3", "DCE10").value;
+    let type = this.expect(TokenType.IDENTF, "twa93na smya dyal chi naw3", "DCE10", "lanwa3 li mmkdin tdirhom : 'ra9m', 'nass', 'tona2i' awla dir khawi k9ima").value;
     while (this.check(TokenType.LBRACT)) {
       this.advance();
       this.expect(TokenType.RBRACT, "twa93na ']' mora '[' f naw3", "DCE3");

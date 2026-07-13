@@ -33,12 +33,12 @@ class Scope {
       throw new DarijaError({
   code: "DCE13",
   stage: "checker",
-  message: `'${name}' dija mdeclaria`,
+  message: `'${name}' dija m3rfa`,
   location: {
     line,
     column,
   },
-  hint: "",
+  hint: `${name} = 9ima fblast (dir/khli ${name} = 9ima`,
 });
     }
     this.vars.set(name, info);
@@ -80,12 +80,12 @@ export class Checker {
         throw new DarijaError({
   code: "DCE13",
   stage: "checker",
-  message: `dala '${fn.name}' dija mdeclaria`,
+  message: `dala '${fn.name}' dija m3rfa`,
   location: {
         line: fn.pos.line,
     column: fn.pos.column,
   },
-  hint: '',
+  hint: `stkhdm dalla dyal ${fn.name}() awla dir dalla jdida`,
 });
     }
     this.functions.set(fn.name, { params: fn.params, returnType: fn.returnType });
@@ -108,7 +108,7 @@ export class Checker {
         line: stmt.pos.line,
     column: stmt.pos.column,
   },
-  hint: '',
+  hint: 'dirha lldakhl dyal dalla',
 });
         }
         if (stmt.argument) {
@@ -117,11 +117,12 @@ export class Checker {
             throw new DarijaError({
   code: "DCE15",
   stage: "checker",
-  message: `twa93n ${fn.returnType}, wlkin l9ina ${argType}`,
+  message: `mknach kanstaw l9ima dyal '${argType}', kona mtw93in '${fn.returnType}'`,
   location: {
         line: stmt.pos.line,
     column: stmt.pos.column,
-  }
+  },
+  hint: `ach ban lik traj3 ${fn.returnType} fbalst ${argType} ?`,
 });
           }
         }
@@ -169,7 +170,8 @@ export class Checker {
   location: {
         line: stmt.pos.line,
     column: stmt.pos.column,
-  }
+  },
+  hint: "dir '9ta3' fldakhl dyal chi dwara"
 });
         }
         return;
@@ -182,7 +184,8 @@ export class Checker {
   location: {
         line: stmt.pos.line,
     column: stmt.pos.column,
-  }
+  },
+  hint: "dir 'kml' fldakhl dyal chi dwara"
 });
         }
         return;
@@ -220,7 +223,8 @@ export class Checker {
   location: {
         line: decl.pos.line,
     column: decl.pos.column,
-  }
+  },
+  hint: `ach ban link tstkhdm ${decl.typeAnnotation} fbalst ${initType}`
 });
       }
       // Only lock the variable to a concrete type when the user asked for
@@ -231,7 +235,7 @@ export class Checker {
       throw new DarijaError({
   code: "DCE16",
   stage: "checker",
-  message: `'${decl.name}' howa tabit idan khaso 9ima`,
+  message: `'${decl.name}' howa tabit idan khaso 9ima flwl`,
   location: {
         line: decl.pos.line,
     column: decl.pos.column,
@@ -259,7 +263,8 @@ export class Checker {
   location: {
         line: param.pos.line,
     column: param.pos.column
-  }
+  },
+  hint: `ach ban link tstkhdm ${param.typeAnnotation} fbalst ${defaultType}`
 });
         }
       }
@@ -292,11 +297,11 @@ export class Checker {
       case "NumericLiteral":
         return "ra9m";
       case "StringLiteral":
-        return "string";
+        return "nass";
       case "BooleanLiteral":
-        return "bool";
+        return "tona2i";
       case "NullLiteral":
-        return "null";
+        return "khawi";
 
       case "ArrayExpression": {
         if (expr.elements.length === 0) return `${UNKNOWN}[]`;
@@ -340,7 +345,7 @@ export class Checker {
             throw new DarijaError({
   code: "DCE16",
   stage: "checker",
-  message: `mat9drh t3ti 9ima l '${expr.target.name}', la79ach how tabit (khli)`,
+  message: `mat9drh t3ti 9ima l '${expr.target.name}', la79ach how tabit (m3rf b 'khli')`,
   location: {
         line: expr.pos.line,
     column: expr.pos.column
@@ -355,7 +360,7 @@ export class Checker {
   location: {
         line: expr.pos.line,
     column: expr.pos.column
-  }
+  },
 });
           }
         } else {
@@ -369,7 +374,7 @@ export class Checker {
         const rightType = this.inferType(expr.right, scope);
 
         if (["==", "!=", "<", "<=", ">", ">="].includes(expr.operator)) {
-          return "bool";
+          return "tona2i";
         }
 
         if (expr.operator === "+") {
@@ -387,11 +392,11 @@ export class Checker {
       case "LogicalExpression":
         this.inferType(expr.left, scope);
         this.inferType(expr.right, scope);
-        return "bool";
+        return "tona2i";
 
       case "UnaryExpression": {
         const argType = this.inferType(expr.argument, scope);
-        if (expr.operator === "!") return "bool";
+        if (expr.operator === "!") return "tona2i";
         this.expectType(argType, "ra9m", expr.pos);
         return "ra9m";
       }
@@ -430,7 +435,8 @@ export class Checker {
   location: {
         line: expr.pos.line,
     column: expr.pos.column
-  }
+  },
+  hint: `dir ta3rif l dala ${expr.callee.name} bhal haka : dalla ${expr.callee.name}(){ chi logic }}`
 });
         }
 

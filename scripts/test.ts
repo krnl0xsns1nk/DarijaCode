@@ -12,11 +12,6 @@
  * expected file is (re)written from the actual output instead of
  * failing — that's the whole of "snapshot support."
  *
- * Note on chalk: it's already a project dependency, but chalk 5.x is
- * ESM-only, which breaks a plain `require()` under this project's
- * CommonJS ts-node setup. Hand-rolled ANSI codes below avoid that
- * mismatch entirely rather than fighting module resolution for
- * something this small.
  */
 
 import * as fs from "fs";
@@ -29,9 +24,6 @@ import { Checker } from "../src/compiler/checker";
 import { compile } from "../src/compiler/compiler";
 import { DarijaError } from "../src/compiler/errors";
 
-// ---------------------------------------------------------------------------
-// Setup
-// ---------------------------------------------------------------------------
 
 const ROOT = path.resolve(__dirname, "..");
 const TESTS_DIR = path.join(ROOT, "tests");
@@ -50,9 +42,6 @@ const color = {
   bold: (s: string) => `\x1b[1m${s}\x1b[0m`,
 };
 
-// ---------------------------------------------------------------------------
-// CLI args
-// ---------------------------------------------------------------------------
 
 const args = process.argv.slice(2);
 const update = args.includes("--update");
@@ -68,9 +57,6 @@ if (categories.length === 0) {
   process.exit(1);
 }
 
-// ---------------------------------------------------------------------------
-// Discovery
-// ---------------------------------------------------------------------------
 
 function findDrjFiles(dir: string): string[] {
   if (!fs.existsSync(dir)) return [];

@@ -5,7 +5,7 @@ const keywords: Record<string, TokenType> = {
   khli: TokenType.KHLI,
   kteb: TokenType.KTEB,
 
-  fn: TokenType.FN,
+  dalla: TokenType.FN,
   raj3: TokenType.RAJ3,
 
   ila: TokenType.ILA,
@@ -20,13 +20,13 @@ const keywords: Record<string, TokenType> = {
 
   class: TokenType.CLASS,
 
-  dirflblasa: TokenType.DIRFLBLASA,
+  lbnnay: TokenType.DIRFLBLASA,
 
-  wraatmn: TokenType.WRAATMN,
+  wratmn: TokenType.WRAATMN,
 
-  true: TokenType.TRUE,
-  false: TokenType.FALSE,
-  null: TokenType.NULL,
+  sa7i7: TokenType.TRUE,
+  ghalat: TokenType.FALSE,
+  khawi: TokenType.NULL,
 };
 
 export class Lexer {

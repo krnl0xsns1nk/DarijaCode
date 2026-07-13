@@ -26,10 +26,6 @@
 
 set -euo pipefail
 
-# ---------------------------------------------------------------------------
-# Bash-side coloring, for this script's own output (not the test runner's)
-# ---------------------------------------------------------------------------
-
 c_green()  { printf '\033[32m%s\033[0m' "$1"; }
 c_red()    { printf '\033[31m%s\033[0m' "$1"; }
 c_yellow() { printf '\033[33m%s\033[0m' "$1"; }
@@ -41,11 +37,6 @@ ok()   { echo "$(c_green "ok:") $1"; }
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Locate the project root by walking up from wherever this script actually
-# lives until a package.json is found. This works whether the script sits
-# at scripts/setup-tests.sh (the intended location) or was moved/run
-# directly from the project root — it never assumes its own position
-# relative to the root.
 find_root() {
   local dir="$1"
   while [ "$dir" != "/" ]; do
@@ -68,10 +59,6 @@ cd "$ROOT"
 
 say "Setting up the DarijaCode testing infrastructure in: $ROOT"
 
-# ---------------------------------------------------------------------------
-# 1. Folder structure
-# ---------------------------------------------------------------------------
-
 mkdir -p scripts
 mkdir -p tests/lexer
 mkdir -p tests/parser
@@ -86,8 +73,6 @@ mkdir -p tests/outputs
 
 ok "folder structure created"
 
-# tests/outputs holds compiled binaries generated *during* a test run —
-# it's scratch space, not source. Keep it out of version control.
 cat > tests/outputs/.gitignore <<'EOF'
 *
 !.gitignore
@@ -131,7 +116,7 @@ dir age: ra9m = 20;
 EOF
 
 cat > tests/parser/valid-function.drj <<'EOF'
-fn add(a: ra9m, b: ra9m): ra9m {
+dalla add(a: ra9m, b: ra9m): ra9m {
     raj3 a + b;
 }
 EOF
@@ -171,7 +156,7 @@ ila (age >= 18 {
 EOF
 
 cat > tests/parser/invalid-braces.drj <<'EOF'
-fn greet() {
+dalla greet() {
     kteb("Salam");
 EOF
 
@@ -183,7 +168,7 @@ age = 21;
 EOF
 
 cat > tests/checker/valid-function.drj <<'EOF'
-fn square(x: ra9m): ra9m {
+dalla square(x: ra9m): ra9m {
     raj3 x * x;
 }
 
@@ -281,11 +266,6 @@ cat > scripts/test.ts <<'EOF'
  * expected file is (re)written from the actual output instead of
  * failing — that's the whole of "snapshot support."
  *
- * Note on chalk: it's already a project dependency, but chalk 5.x is
- * ESM-only, which breaks a plain `require()` under this project's
- * CommonJS ts-node setup. Hand-rolled ANSI codes below avoid that
- * mismatch entirely rather than fighting module resolution for
- * something this small.
  */
 
 import * as fs from "fs";
@@ -298,9 +278,6 @@ import { Checker } from "../src/compiler/checker";
 import { compile } from "../src/compiler/compiler";
 import { DarijaError } from "../src/compiler/errors";
 
-// ---------------------------------------------------------------------------
-// Setup
-// ---------------------------------------------------------------------------
 
 const ROOT = path.resolve(__dirname, "..");
 const TESTS_DIR = path.join(ROOT, "tests");
@@ -319,9 +296,6 @@ const color = {
   bold: (s: string) => `\x1b[1m${s}\x1b[0m`,
 };
 
-// ---------------------------------------------------------------------------
-// CLI args
-// ---------------------------------------------------------------------------
 
 const args = process.argv.slice(2);
 const update = args.includes("--update");
@@ -337,9 +311,6 @@ if (categories.length === 0) {
   process.exit(1);
 }
 
-// ---------------------------------------------------------------------------
-// Discovery
-// ---------------------------------------------------------------------------
 
 function findDrjFiles(dir: string): string[] {
   if (!fs.existsSync(dir)) return [];

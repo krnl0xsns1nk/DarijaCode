@@ -24,6 +24,7 @@
     "build": "tsc",
     "start": "node dist/compiler/index.js",
     "dev": "ts-node src/compiler/index.ts",
+    "now": "scripts/run.sh",
     "test": "ts-node scripts/test.ts all",
     "test:update": "ts-node scripts/test.ts all --update",
     "test:lexer": "ts-node scripts/test.ts lexer",
