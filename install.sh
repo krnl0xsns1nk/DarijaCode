@@ -119,6 +119,6 @@ echo "====================================="
 echo
 echo "jrb:"
 echo
-echo 'echo '\''kteb("Salam!")'\'' > hello.drj'
+echo 'echo '\''kteb("wafin, al3alam!");'\'' > hello.drj'
 echo "drj run hello.drj"
 echo
