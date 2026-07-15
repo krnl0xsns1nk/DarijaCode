@@ -1,6 +1,6 @@
 {
   "name": "darijacode",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A new programming languages based on Moroccan words to let people on morocco learn programming fast without need to english or learn advanced concepts",
   "keywords": [
     "DarijaCode",
@@ -24,7 +24,13 @@
   "bin": {
     "drj": "./dist/cli.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
+    "prepublishOnly": "npm run setup",
     "build": "tsc && tsc-alias && chmod +x dist/cli.js",
     "start": "node dist/compiler/index.js",
     "dev": "ts-node -r tsconfig-paths/register src/compiler/index.ts",

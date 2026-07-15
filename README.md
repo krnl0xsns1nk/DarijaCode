@@ -13,6 +13,19 @@ A programming language and compiler written for fun, using Moroccan Darija.
 
 ---
 
+## Installation
+
+### Quick install
+
+Linux / Termux:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/krnl0xsns1nk/DarijaCode/main/scripts/install.sh | sh
+```
+
+---
+
+
 > **DarijaCode is a hobby project built for learning compiler development and experimenting with a programming language based on Moroccan Darija.**
 >
 > It is **not** trying to replace JavaScript, Python, C, or any existing language.
