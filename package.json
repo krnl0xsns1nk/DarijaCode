@@ -16,17 +16,22 @@
     "type": "git",
     "url": "git+https://github.com/krnl0xsns1nk/DarijaCode.git"
   },
-  "license": "ISC",
+  "license": "DCL",
   "author": "krnl0xsns1nk",
   "type": "commonJs",
   "main": "compiler/index.js",
+  "engines": { "node": ">=16.0.0" },
+  "bin": {
+    "drj": "./dist/cli.js"
+  },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "start": "node dist/compiler/index.js",
-    "dev": "ts-node src/compiler/index.ts",
+    "dev": "ts-node -r tsconfig-paths/register src/compiler/index.ts",
     "now": "scripts/run.sh",
-    "test": "ts-node scripts/test.ts all",
-    "test:update": "ts-node scripts/test.ts all --update",
+    "setup": "npm run build && npm link",
+    "test": "ts-node -r tsconfig-paths/register scripts/test.ts all",
+    "test:update": "ts-node -r tsconfig-paths/register scripts/test.ts all --update",
     "test:lexer": "ts-node scripts/test.ts lexer",
     "test:parser": "ts-node scripts/test.ts parser",
     "test:checker": "ts-node scripts/test.ts checker",
@@ -37,7 +42,13 @@
   "devDependencies": {
     "@types/node": "^26.1.0",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.9.0",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^6.0.3",
     "typescript-language-server": "^5.3.0"
+  },
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "commander": "^15.0.0"
   }
 }

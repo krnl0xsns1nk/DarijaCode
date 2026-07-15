@@ -5,8 +5,8 @@ import * as path from "path";
 
 import { Lexer } from "./lexer";
 import { Parser } from "./parser";
-import { Checker } from "./checker";
-import { Codegen } from "./codegen";
+import { Checker } from "./checker/index";
+import { Codegen } from "./codegen/codegen";
 import { DarijaError } from "./errors";
 
 export interface CompileOptions {

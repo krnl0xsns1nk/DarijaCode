@@ -5,7 +5,10 @@
       "type": "VariableDeclaration",
       "kind": "dir",
       "name": "age",
-      "typeAnnotation": "ra9m",
+      "typeAnnotation": {
+        "base": "ra9m",
+        "d": 0
+      },
       "init": {
         "type": "NumericLiteral",
         "value": 20

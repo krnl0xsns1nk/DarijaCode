@@ -17,7 +17,8 @@ import {
   PrintStatement,
   ExpressionStatement,
 } from "./ast";
-
+import { DjType } from "./codegen/types";
+import { showType } from "@/utils/showType";
 // NOTE: class parsing (jdid / this) is intentionally not implemented yet.
 // The lexer does not tokenize `this` or `jdid` as keywords, so classes
 // stay identifiers-only for now. Add THIS/JDID token types first.
@@ -86,7 +87,7 @@ export class Parser {
 
     const name = this.expect(TokenType.IDENTF, "twa93na smya dyal mutaghayer", "DCE10").value;
 
-    let typeAnnotation: string | null = null;
+    let typeAnnotation: DjType | undefined = undefined
     if (this.match(TokenType.COLON)) {
       typeAnnotation = this.typeAnnotation();
     }
@@ -103,15 +104,27 @@ export class Parser {
     return { type: "VariableDeclaration", kind, name, typeAnnotation, init, pos };
   }
 
-  private typeAnnotation(): string {
-    // supports: string | ra9m | bool | ...  and array suffix: ra9m[]
+  private typeAnnotation(): DjType {
+    const djtype: DjType = {base: "khawi", d: 0}
     let type = this.expect(TokenType.IDENTF, "twa93na smya dyal chi naw3", "DCE10", "lanwa3 li mmkdin tdirhom : 'ra9m', 'nass', 'tona2i' awla dir khawi k9ima").value;
+switch (type) {
+    case "ra9m":
+    case "nass":
+    case "tona2i":
+    case "khawi":
+    case "unknown":
+    case "walo":
+        djtype.base = type;
+        break;
+    default:
+        this.error(`naw3 dyal '${type}' makaynch awla mmd3omch`, "DCE15", "dir chi naw3 md3om bhal: 'ra9m', 'nass' etc ..");
+}
     while (this.check(TokenType.LBRACT)) {
       this.advance();
       this.expect(TokenType.RBRACT, "twa93na ']' mora '[' f naw3", "DCE3");
-      type += "[]";
+      djtype.d = (djtype.d ?? 0) + 1;
     }
-    return type;
+    return djtype
   }
 
   private params(): Param[] {
@@ -122,7 +135,7 @@ export class Parser {
       const pos = this.pos_();
       const name = this.expect(TokenType.IDENTF, "twa93na smya llmo3amilat", "DCE10").value;
 
-      let typeAnnotation: string | null = null;
+      let typeAnnotation: DjType = { base: "khawi", d:0 }
       if (this.match(TokenType.COLON)) {
         typeAnnotation = this.typeAnnotation();
       }
@@ -157,14 +170,14 @@ export class Parser {
     const name = this.expect(TokenType.IDENTF, "tw93na smya l ddalla", "DCE10", "fn smya(){}").value;
     const fnParams = this.params();
 
-    let returnType: string | null = null;
+    let returnType: DjType = { base: "khawi", d:0};
     if (this.match(TokenType.COLON)) {
       returnType = this.typeAnnotation();
     }
 
     const body = this.block();
 
-    return { type: "FunctionDeclaration", name, params: fnParams, returnType, body, pos };
+    return { type: "FunctionDeclaration", name, params: fnParams, returnType: returnType ?? "khawi", body, pos };
   }
 
   private returnStatement(): ReturnStatement {

@@ -5,6 +5,26 @@ export interface ErrorLocation {
   column: number;
 }
 
+
+export class CodegenError extends Error {
+  constructor(message: string, line: number = -1, column: number = -1) {
+    super();
+    throw new DarijaError({
+  code: "DCE-0",
+  stage: "codegen",
+  message: `DarijaCode Codegen Error: ${message} at ${line}:${column}`,
+  location: {
+    line: line,
+    column: column
+  }
+})
+  }
+}
+
+
+
+
+
 export class DarijaError extends Error {
   public readonly stage: ErrorStage;
   public readonly code: string;

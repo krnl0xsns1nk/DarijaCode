@@ -1,3 +1,4 @@
+import { DjType } from "./codegen/types";
 export interface Position {
   line: number;
   column: number;
@@ -32,14 +33,14 @@ export interface VariableDeclaration extends BaseNode {
   type: "VariableDeclaration";
   kind: "dir" | "khli"; 
   name: string;
-  typeAnnotation: string | null;
+  typeAnnotation?: DjType;
   init: Expression | null;
 }
 
 export interface Param extends BaseNode {
   type: "Param";
   name: string;
-  typeAnnotation: string | null;
+  typeAnnotation?: DjType;
   defaultValue: Expression | null;
   rest: boolean; 
 }
@@ -48,7 +49,7 @@ export interface FunctionDeclaration extends BaseNode {
   type: "FunctionDeclaration";
   name: string;
   params: Param[];
-  returnType: string | null;
+  returnType?: DjType;
   body: BlockStatement;
 }
 

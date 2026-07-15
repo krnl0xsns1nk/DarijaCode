@@ -5,7 +5,6 @@
       "type": "VariableDeclaration",
       "kind": "dir",
       "name": "i",
-      "typeAnnotation": null,
       "init": {
         "type": "NumericLiteral",
         "value": 0

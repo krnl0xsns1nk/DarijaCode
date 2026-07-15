@@ -26,6 +26,14 @@
 
 set -euo pipefail
 
+echo -e "that will make snapshots of the compiler \n if the compiler has bug, the snapshots also will inherite that bug\nmake sure the code is works before running new test setup"
+read -p "are you sure ? type YES to continue:  " -n 3 -r
+if [[ "$REPLY" != "YES" ]]; then
+    echo "Confirmation failed. Aborting."
+    exit 1
+fi
+
+
 c_green()  { printf '\033[32m%s\033[0m' "$1"; }
 c_red()    { printf '\033[31m%s\033[0m' "$1"; }
 c_yellow() { printf '\033[33m%s\033[0m' "$1"; }
@@ -571,14 +579,14 @@ const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
 pkg.scripts = pkg.scripts || {};
 
 const newScripts = {
-  test: 'ts-node scripts/test.ts all',
-  'test:update': 'ts-node scripts/test.ts all --update',
-  'test:lexer': 'ts-node scripts/test.ts lexer',
-  'test:parser': 'ts-node scripts/test.ts parser',
-  'test:checker': 'ts-node scripts/test.ts checker',
-  'test:compiler': 'ts-node scripts/test.ts compiler',
-  'test:runtime': 'ts-node scripts/test.ts runtime',
-  'test:errors': 'ts-node scripts/test.ts errors',
+  test: 'ts-node -r tsconfig-paths/register scripts/test.ts all',
+  'test:update': 'ts-node -r tsconfig-paths/register scripts/test.ts all --update',
+  'test:lexer': 'ts-node -r tsconfig-paths/register scripts/test.ts lexer',
+  'test:parser': 'ts-node -r tsconfig-paths/register scripts/test.ts parser',
+  'test:checker': 'ts-node -r tsconfig-paths/register scripts/test.ts checker',
+  'test:compiler': 'ts-node -r tsconfig-paths/register scripts/test.ts compiler',
+  'test:runtime': 'ts-node -r tsconfig-paths/register scripts/test.ts runtime',
+  'test:errors': 'ts-node -r tsconfig-paths/register scripts/test.ts errors',
 };
 
 for (const [key, value] of Object.entries(newScripts)) {

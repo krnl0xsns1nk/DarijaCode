@@ -8,19 +8,28 @@
         {
           "type": "Param",
           "name": "a",
-          "typeAnnotation": "ra9m",
+          "typeAnnotation": {
+            "base": "ra9m",
+            "d": 0
+          },
           "defaultValue": null,
           "rest": false
         },
         {
           "type": "Param",
           "name": "b",
-          "typeAnnotation": "ra9m",
+          "typeAnnotation": {
+            "base": "ra9m",
+            "d": 0
+          },
           "defaultValue": null,
           "rest": false
         }
       ],
-      "returnType": "ra9m",
+      "returnType": {
+        "base": "ra9m",
+        "d": 0
+      },
       "body": {
         "type": "BlockStatement",
         "body": [
