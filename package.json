@@ -20,9 +20,11 @@
   "author": "krnl0xsns1nk",
   "type": "commonJs",
   "main": "compiler/index.js",
-  "engines": { "node": ">=16.0.0" },
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "bin": {
-    "drj": "./dist/cli.js"
+    "drj": "dist/cli.js"
   },
   "files": [
     "dist",
