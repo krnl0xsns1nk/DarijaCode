@@ -20,7 +20,7 @@ A programming language and compiler written for fun, using Moroccan Darija.
 Linux / Termux:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/krnl0xsns1nk/DarijaCode/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/krnl0xsns1nk/darijaCode/master/install.sh | sh
 ```
 
 ---
