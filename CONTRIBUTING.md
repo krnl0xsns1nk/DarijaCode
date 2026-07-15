@@ -55,7 +55,7 @@ npm run test:runtime
 npm run test:errors
 ```
 Project Layout
-
+```
 src/
 ├── cli.ts
 ├── compiler/
@@ -81,9 +81,9 @@ tests/
 docs/
 ├── about.md
 └── error_codes.md
-
+```
 Compiler Pipeline
-
+```
 Source (.drj)
       ↓
 Lexer
@@ -97,7 +97,7 @@ Code Generator
 C Compiler
       ↓
 Executable
-
+```
 Before Opening a Pull Request
 
 - Keep changes focused.
