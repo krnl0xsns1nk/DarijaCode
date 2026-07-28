@@ -7,13 +7,13 @@ import { isType } from "@/utils/showType";
 export default function genExpression(codegen: Codegen, expr: Expression, scope: Scope): string {
     switch (expr.type) {
       case "NumericLiteral":
-        return String(expr.value);
+        return `dj_int(${expr.value})`
       case "StringLiteral":
-        return `"${codegen.escapeString(expr.value)}"`;
+        return `dj_string("${codegen.escapeString(expr.value)}")`;
       case "BooleanLiteral":
-        return expr.value ? "true" : "false";
+    return expr.value ? "dj_bool(1)" : "dj_bool(0)";
       case "NullLiteral":
-        return "NULL";
+        return "dj_null()";
 
       case "Identifier":
         return expr.name;
@@ -27,13 +27,16 @@ export default function genExpression(codegen: Codegen, expr: Expression, scope:
         const left = codegen.genExpression(expr.left, scope);
         const right = codegen.genExpression(expr.right, scope);
 
-        if (expr.operator === "+" && (isType(leftType, "nass")) || isType(rightType, "nass")) {
-          return `dj_concat(${left}, ${right})`;
-        }
-        if (expr.operator === "**") {
-          return `pow(${left}, ${right})`;
-        }
-        return `(${left} ${expr.operator} ${right})`;
+        const ops: Record<string,string> = {
+              "+": "dj_add",
+              "-": "dj_sub",
+              "*": "dj_mul",
+              "/": "dj_div",
+              "==": "dj_equal"
+          };
+
+        return `${ops[expr.operator]}(${left}, ${right})`;
+
       }
 
       case "LogicalExpression": {

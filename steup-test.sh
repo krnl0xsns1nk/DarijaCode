@@ -1,29 +1,3 @@
-#!/usr/bin/env bash
-#
-# DarijaCode — testing infrastructure setup
-#
-# Run once from the project root:
-#
-#   bash scripts/setup-tests.sh
-#
-# What this does, in order:
-#   1. Creates tests/{lexer,parser,checker,compiler,runtime,errors,
-#      snapshots,fixtures,outputs}/
-#   2. Writes real .drj fixture files into each category — each one
-#      demonstrates exactly one behavior.
-#   3. Writes scripts/test.ts, the test runner.
-#   4. Merges the required test:* scripts into package.json, without
-#      touching anything else in it.
-#   5. Actually runs the compiler once (via `npm run test:update`) to
-#      record real expected output for every fixture — nothing here is a
-#      hand-typed guess of what a token dump or an error message should
-#      look like. If ts-node isn't installed yet, this step is skipped
-#      with instructions instead of failing.
-#
-# Re-running this script re-writes the fixtures listed below to their
-# original content. Any test files you add yourself, under different
-# names, are left untouched.
-
 set -euo pipefail
 
 echo -e "that will make snapshots of the compiler \n if the compiler has bug, the snapshots also will inherite that bug\nmake sure the code is works before running new test setup"
@@ -85,17 +59,6 @@ cat > tests/outputs/.gitignore <<'EOF'
 *
 !.gitignore
 EOF
-
-# ---------------------------------------------------------------------------
-# 2. Fixture files
-#
-# Naming convention: files prefixed "valid-" are expected to succeed at
-# whatever stage their folder tests; files prefixed "invalid-" are
-# expected to fail there. The runner does NOT branch on this prefix — it
-# only tells a human what a fixture is for. What "correct" means for each
-# file is recorded for real in step 5 below (snapshot seeding), never
-# hand-typed.
-# ---------------------------------------------------------------------------
 
 say "writing fixture files"
 
@@ -204,10 +167,6 @@ kteb(a + b);
 EOF
 
 # --- runtime/ ---------------------------------------------------------------
-# DarijaCode doesn't have a separate interpreted runtime yet (see
-# DEVELOPER.md's known-gaps table) — the only thing that actually
-# executes a program today is the compiled C binary. These tests reuse
-# that same execution path rather than pretending an interpreter exists.
 
 cat > tests/runtime/valid-loop-sum.drj <<'EOF'
 dir total = 0;
@@ -233,9 +192,6 @@ kteb(mystery());
 EOF
 
 # --- fixtures/ ---------------------------------------------------------
-# Shared example snippets for hand-writing new tests. DarijaCode has no
-# working module system yet (see DEVELOPER.md), so these are reference
-# material only — not `jib`-imported by anything.
 
 cat > tests/fixtures/hello.drj <<'EOF'
 kteb("Salam mn DarijaCode!");

@@ -1,0 +1,21 @@
+khli a: ra9m = 10;
+kteb("hello world");
+dir b := "ssss";
+
+
+// yeah this is real
+
+ila (a > 1) {
+    kteb("idk");
+}
+dalla dyali(a:ra9m, b: nass): walo {
+    khli s = a + 10
+    kteb(s);
+}
+dalla add(c: ra9m, d:ra9m): ra9m {
+    raj3 c + d;
+}
+
+/* WTFun */
+dyali(a, b);
+kteb(add(a, 15));

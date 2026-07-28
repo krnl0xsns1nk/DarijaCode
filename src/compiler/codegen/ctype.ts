@@ -1,8 +1,17 @@
 
 import { DjType } from "./types";
-import { Codegen } from "./codegen"
-export function cType(codegen: Codegen, type: DjType): string {
-  let c: string;
+export function cType(that?: any, type?: DjType): string {
+  return `DjValue`
+}
+
+
+
+
+
+
+
+
+/*  let c: string;
 
 switch (type.base) {
     case "ra9m":
@@ -21,5 +30,5 @@ switch (type.base) {
         c = "void*";
 }
   return type.d !== undefined && type.d > 0 ? (c + "*".repeat(type.d)) : c
-}
+}*/
 

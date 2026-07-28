@@ -100,6 +100,20 @@ function compileCFile(
   preferred?: string
 ) {
 
+
+const runtimePath = path.join(
+  __dirname,
+  "../runtime"
+);
+
+//console.log(runtimePath);
+  const runtimeFiles = [
+    "value.c",
+    "print.c",
+    "operat.c"
+].map(file => path.join(runtimePath, file));
+
+
   const compilers =
     preferred
       ? [preferred]
@@ -111,7 +125,15 @@ function compileCFile(
     try {
       execFileSync(
         cc,
-        [cFile, "-lm", "-o", output],
+      [
+      cFile,
+      ...runtimeFiles,
+      "-I",
+      runtimePath,
+      "-lm",
+      "-o",
+      output
+        ],
         { stdio: "pipe" }
       );
       return;
@@ -119,6 +141,7 @@ function compileCFile(
       last = err;
     }
   }
+
 
   const stderr =
     last &&

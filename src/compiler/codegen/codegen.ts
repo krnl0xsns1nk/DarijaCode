@@ -5,7 +5,6 @@ import {
   FunctionDeclaration,
   BlockStatement,
 } from "../ast";
-import { CodegenError } from "../errors";
 import Scope from "./scope";
 import { DjType, FunctionSig } from "./types";
 import statementGen from "./stmts";
@@ -13,14 +12,10 @@ import expressionGen from  "./expr";
 import infertype from "./infertype"
 import { cType } from "./ctype";
 import { dj_print } from "./runtime";
-const RUNTIME_PRELUDE = `
-static char* dj_concat(const char* a, const char* b) {
-    size_t len = strlen(a) + strlen(b) + 1;
-    char* out = (char*)malloc(len);
-    strcpy(out, a);
-    strcat(out, b);
-    return out;
-}
+
+
+const RUNTIME = `
+#include "runtime.h"
 `.trim();
 
 export class Codegen {
@@ -42,8 +37,7 @@ export class Codegen {
       "#include <string.h>",
       "#include <stdbool.h>",
       "#include <math.h>",
-      "",
-      RUNTIME_PRELUDE,
+      RUNTIME,
       "",
     ];
 

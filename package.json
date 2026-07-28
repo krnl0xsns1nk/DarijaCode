@@ -33,10 +33,12 @@
   ],
   "scripts": {
     "prepublishOnly": "npm run setup",
+
     "build": "tsc && tsc-alias && chmod +x dist/cli.js",
     "start": "node dist/compiler/index.js",
-    "dev": "ts-node -r tsconfig-paths/register src/compiler/index.ts",
-    "now": "scripts/run.sh",
+
+    "dev": "ts-node -r tsconfig-paths/register src/cli.ts",
+
     "setup": "npm run build && npm link",
     "test": "ts-node -r tsconfig-paths/register scripts/test.ts all",
     "test:update": "ts-node -r tsconfig-paths/register scripts/test.ts all --update",

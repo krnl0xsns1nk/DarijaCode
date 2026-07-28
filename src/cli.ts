@@ -2,7 +2,9 @@
 import { existsSync } from "fs";
 import { resolve, extname } from "path";
 import execute from "./compiler/index";
-const VERSION = "0.2.0";
+import packageJson from "../package.json";
+
+const VERSION = packageJson.version;
 
 function error(message: string) {
   console.error(`✗ ${message}`);

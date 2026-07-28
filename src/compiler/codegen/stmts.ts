@@ -13,9 +13,9 @@ export default function statementGen(codegen: Codegen, stmt: Statement, scope: S
 
         if (!type.d && stmt.init.type === "ArrayExpression") {
           const values = stmt.init.elements.map((e: any) => codegen.genExpression(e, scope));
-          codegen.emit(`${codegen.cType(type)} ${stmt.name}[] = {${values.join(", ")}};`);
+          codegen.emit(`DjValue ${stmt.name}[] = {${values.join(", ")}};`);
         } else {
-          codegen.emit(`${codegen.cType(type)} ${stmt.name} = ${codegen.genExpression(stmt.init, scope)};`);
+          codegen.emit(`DjValue ${stmt.name} = ${codegen.genExpression(stmt.init, scope)};`);
         }
         return;
       }
@@ -87,7 +87,7 @@ export default function statementGen(codegen: Codegen, stmt: Statement, scope: S
 
       case "PrintStatement": {
         const type = codegen.inferType(stmt.argument, scope);
-        codegen.emit(codegen.genPrint(stmt.argument, type, scope));
+        codegen.emit(`${codegen.genPrint(stmt.argument, type, scope)}`);
         return;
       }
 
