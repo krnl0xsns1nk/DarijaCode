@@ -1,0 +1,9 @@
+{
+  "name": "use-before-declare",
+  "category": "checker",
+  "source": null,
+  "spec": "tests/specs/variables.spec.drj",
+  "line": 152,
+  "expect": "fail",
+  "error": "CHECKER_UNDEFINED_VARIABLE"
+}

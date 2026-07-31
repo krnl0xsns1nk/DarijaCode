@@ -1,0 +1,9 @@
+{
+  "name": "explicit-string-invalid",
+  "category": "checker",
+  "source": null,
+  "spec": "tests/specs/variables.spec.drj",
+  "line": 103,
+  "expect": "fail",
+  "error": "CHECKER_TYPE_MISMATCH"
+}

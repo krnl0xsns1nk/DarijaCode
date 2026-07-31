@@ -1,22 +1,28 @@
+#!/usr/bin/env node
+
 /**
- * DarijaCode test runner.
+ * DarijaCode Test Runner
+ *
+ * Executes generated test files against the DarijaCode compiler and validates
+ * results against metadata specifications.
+ *
+ * Categories:
+ *   - lexer:    Token output (snapshot-based)
+ *   - parser:   AST output (snapshot-based)
+ *   - checker:  Type checking results (expect: pass/fail + error codes)
+ *   - compiler: Compilation and binary execution (expect: stdout)
+ *   - runtime:  Program output (expect: stdout)
+ *   - errors:   Expected compilation failures (expect: fail + error code)
  *
  * Usage:
- *   ts-node scripts/test.ts <all|lexer|parser|checker|compiler|runtime|errors> [--update]
- *
- * Discovers every .drj file under tests/<category>/ automatically — no
- * test name is ever hardcoded here. For each file it runs the pipeline
- * stage(s) that category exercises, turns the result (success or a
- * thrown error) into a single comparable string, and checks it against
- * a recorded expected file. With --update, a missing or differing
- * expected file is (re)written from the actual output instead of
- * failing — that's the whole of "snapshot support."
- *
+ *   npm test                     # run everything
+ *   npm run test:lexer           # run only lexer tests
+ *   npm run test -- --update     # regenerate snapshots
  */
 
 import * as fs from "fs";
 import * as path from "path";
-import { execFileSync } from "child_process";
+import { execFileSync, execSync } from "child_process";
 
 import { Lexer } from "../src/compiler/lexer";
 import { Parser } from "../src/compiler/parser";
@@ -24,16 +30,37 @@ import { Checker } from "../src/compiler/checker";
 import { compile } from "../src/compiler/compiler";
 import { DarijaError } from "../src/compiler/errors";
 
-
 const ROOT = path.resolve(__dirname, "..");
-const TESTS_DIR = path.join(ROOT, "tests");
-const SNAPSHOTS_DIR = path.join(TESTS_DIR, "snapshots");
-const OUTPUTS_DIR = path.join(TESTS_DIR, "outputs");
+const GENERATED_DIR = path.join(ROOT, "tests", "generated");
+const SNAPSHOTS_DIR = path.join(ROOT, "tests", "snapshots");
+const OUTPUTS_DIR = path.join(ROOT, "tests", "outputs");
 
-const CATEGORIES = ["lexer", "parser", "checker", "compiler", "runtime", "errors"] as const;
-type Category = (typeof CATEGORIES)[number];
+type Category = "lexer" | "parser" | "checker" | "compiler" | "runtime" | "errors";
 
-const color = {
+interface TestMetadata {
+  name: string;
+  category: Category;
+  spec?: string;
+  line?: number;
+  source?: string | null;
+  expect?: "pass" | "fail";
+  error?: string;
+  stdout?: string;
+  stderr?: string;
+  snapshot?: boolean;
+}
+
+interface TestResult {
+  name: string;
+  category: Category;
+  passed: boolean;
+  timeMs: number;
+  expected: string;
+  received: string;
+  error?: string;
+}
+
+const colors = {
   green: (s: string) => `\x1b[32m${s}\x1b[0m`,
   red: (s: string) => `\x1b[31m${s}\x1b[0m`,
   yellow: (s: string) => `\x1b[33m${s}\x1b[0m`,
@@ -42,39 +69,10 @@ const color = {
   bold: (s: string) => `\x1b[1m${s}\x1b[0m`,
 };
 
-
-const args = process.argv.slice(2);
-const update = args.includes("--update");
-const requested = args.filter((a) => a !== "--update");
-
-const categories: Category[] =
-  requested.length === 0 || requested.includes("all")
-    ? [...CATEGORIES]
-    : requested.filter((a): a is Category => (CATEGORIES as readonly string[]).includes(a));
-
-if (categories.length === 0) {
-  console.error(`Unknown test category. Choose from: all, ${CATEGORIES.join(", ")}`);
-  process.exit(1);
-}
-
-
-function findDrjFiles(dir: string): string[] {
-  if (!fs.existsSync(dir)) return [];
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-  const files: string[] = [];
-  for (const entry of entries) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) files.push(...findDrjFiles(full));
-    else if (entry.isFile() && entry.name.endsWith(".drj")) files.push(full);
-  }
-  return files.sort();
-}
-
-// ---------------------------------------------------------------------------
-// Stable serialization (tokens / AST) — strip source positions so
-// snapshots don't churn every time a line shifts by one character.
-// ---------------------------------------------------------------------------
-
+/**
+ * Strip position information (line, column, pos) from parsed structures
+ * so snapshots don't churn on formatting changes
+ */
 function stripPositions(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(stripPositions);
   if (value && typeof value === "object") {
@@ -88,15 +86,52 @@ function stripPositions(value: unknown): unknown {
   return value;
 }
 
-// ---------------------------------------------------------------------------
-// Running one test: source -> a single comparable string
-// ---------------------------------------------------------------------------
+/**
+ * Discover all generated test files
+ */
+function discoverTests(category?: Category): Map<Category, Map<string, TestMetadata>> {
+  const tests = new Map<Category, Map<string, TestMetadata>>();
 
-function produceActual(file: string, category: Category): string {
-  const source = fs.readFileSync(file, "utf-8");
+  if (!fs.existsSync(GENERATED_DIR)) {
+    return tests;
+  }
+
+  const categories: Category[] = category
+    ? [category]
+    : (fs.readdirSync(GENERATED_DIR) as Category[]);
+
+  for (const cat of categories) {
+    const catDir = path.join(GENERATED_DIR, cat);
+    if (!fs.existsSync(catDir)) continue;
+
+    const catTests = new Map<string, TestMetadata>();
+    const files = fs.readdirSync(catDir);
+
+    for (const file of files) {
+      if (!file.endsWith(".meta.json")) continue;
+
+      const metaPath = path.join(catDir, file);
+      const meta = JSON.parse(fs.readFileSync(metaPath, "utf-8")) as TestMetadata;
+      catTests.set(meta.name, meta);
+    }
+
+    if (catTests.size > 0) {
+      tests.set(cat, catTests);
+    }
+  }
+
+  return tests;
+}
+
+/**
+ * Execute a test for a given category and return the actual output
+ */
+function runTest(metadata: TestMetadata): string {
+  const testFile = path.join(GENERATED_DIR, metadata.category, `${metadata.name}.drj`);
+  const source = fs.readFileSync(testFile, "utf-8");
 
   try {
-    switch (category) {
+    switch (metadata.category) {
       case "lexer": {
         const tokens = new Lexer(source).tokenize();
         return JSON.stringify(stripPositions(tokens), null, 2) + "\n";
@@ -112,188 +147,234 @@ function produceActual(file: string, category: Category): string {
         const tokens = new Lexer(source).tokenize();
         const ast = new Parser(tokens).parse();
         new Checker().check(ast);
-        return "OK\n";
+        return "CHECKER_PASS\n";
       }
 
       case "compiler":
       case "runtime": {
-        const outDir = path.join(OUTPUTS_DIR, category);
+        const outDir = path.join(OUTPUTS_DIR, metadata.category);
         fs.mkdirSync(outDir, { recursive: true });
-        const outputPath = path.join(outDir, path.basename(file, ".drj"));
-        const result = compile(file, { outputPath });
-        return execFileSync(result.binaryPath, [], { encoding: "utf-8" });
+        const outputPath = path.join(outDir, metadata.name);
+
+        const result = compile(testFile, { outputPath });
+        const output = execFileSync(result.binaryPath, [], { encoding: "utf-8" });
+        return output;
       }
 
       case "errors": {
-        const outDir = path.join(OUTPUTS_DIR, "errors");
-        fs.mkdirSync(outDir, { recursive: true });
-        const outputPath = path.join(outDir, path.basename(file, ".drj"));
-        const result = compile(file, { outputPath });
-        // A file under tests/errors/ that compiles cleanly failed to do
-        // its one job — report that as clearly as any other mismatch.
-        return `UNEXPECTED SUCCESS: compiled to ${result.binaryPath}\n`;
+        // For error tests, we expect compilation to fail
+        // If we reach here, compilation succeeded when it shouldn't
+        return "COMPILATION_SUCCEEDED_UNEXPECTEDLY\n";
       }
     }
   } catch (err) {
-    const message =
-      err instanceof DarijaError
-        ? `[${err.stage}:${err.code}] ${err.message}`
-        : err instanceof Error
-          ? err.message
-          : String(err);
-    return `ERROR: ${message}\n`;
+    if (err instanceof DarijaError) {
+      return `${err.stage.toUpperCase()}_ERROR:${err.code}\n`;
+    }
+    if (err instanceof Error) {
+      return `ERROR:${err.message}\n`;
+    }
+    return `ERROR:${String(err)}\n`;
   }
 }
 
-// ---------------------------------------------------------------------------
-// Expected-file location per category
-// ---------------------------------------------------------------------------
-
-function expectedPathFor(file: string, category: Category): string {
-  const name = path.basename(file, ".drj");
-  switch (category) {
-    case "lexer":
-      return path.join(SNAPSHOTS_DIR, "lexer", `${name}.json`);
-    case "parser":
-      return path.join(SNAPSHOTS_DIR, "parser", `${name}.json`);
-    case "checker":
-      return path.join(path.dirname(file), `${name}.expected`);
-    case "compiler":
-    case "runtime":
-      return path.join(path.dirname(file), `${name}.stdout`);
-    case "errors":
-      return path.join(path.dirname(file), `${name}.stderr`);
-  }
+/**
+ * Get or create snapshot file path for a test
+ */
+function getSnapshotPath(metadata: TestMetadata): string {
+  const catDir = path.join(SNAPSHOTS_DIR, metadata.category);
+  fs.mkdirSync(catDir, { recursive: true });
+  return path.join(catDir, `${metadata.name}.json`);
 }
 
-// ---------------------------------------------------------------------------
-// Compare / update
-// ---------------------------------------------------------------------------
+/**
+ * Compare actual output against expected metadata or snapshot
+ */
+function validateTest(metadata: TestMetadata, actual: string, updateMode: boolean): {
+  passed: boolean;
+  expected: string;
+} {
+  // Snapshot-based categories (lexer, parser)
+  if (metadata.category === "lexer" || metadata.category === "parser") {
+    const snapshotPath = getSnapshotPath(metadata);
+    const expected = fs.existsSync(snapshotPath)
+      ? fs.readFileSync(snapshotPath, "utf-8")
+      : null;
 
-function compareOrUpdate(expectedFile: string, actual: string): { passed: boolean; expected: string } {
-  const expected = fs.existsSync(expectedFile) ? fs.readFileSync(expectedFile, "utf-8") : null;
+    if (!expected) {
+      if (updateMode) {
+        fs.writeFileSync(snapshotPath, actual, "utf-8");
+        return { passed: true, expected: actual };
+      }
+      return {
+        passed: false,
+        expected: "(no snapshot — run with --update to generate)",
+      };
+    }
 
-  if (expected === null) {
-    if (update) {
-      fs.mkdirSync(path.dirname(expectedFile), { recursive: true });
-      fs.writeFileSync(expectedFile, actual, "utf-8");
+    if (updateMode && actual !== expected) {
+      fs.writeFileSync(snapshotPath, actual, "utf-8");
       return { passed: true, expected: actual };
     }
-    return { passed: false, expected: "(no snapshot yet — run `npm run test:update`)" };
+
+    return { passed: actual === expected, expected };
   }
 
-  if (update && expected !== actual) {
-    fs.writeFileSync(expectedFile, actual, "utf-8");
-    return { passed: true, expected: actual };
+  // Metadata-based validation (checker, compiler, runtime, errors)
+
+  // Checker: expect pass or fail with error code
+  if (metadata.category === "checker") {
+    if (metadata.expect === "pass") {
+      const passed = actual === "CHECKER_PASS\n";
+      return {
+        passed,
+        expected: passed ? "pass" : `fail (got: ${actual.trim()})`,
+      };
+    }
+
+    if (metadata.expect === "fail" && metadata.error) {
+      const expected = `${metadata.category.toUpperCase()}_ERROR:${metadata.error}\n`;
+      const passed = actual === expected;
+      return {
+        passed,
+        expected: passed ? `fail with ${metadata.error}` : `fail with ${metadata.error} (got: ${actual.trim()})`,
+      };
+    }
+
+    return { passed: false, expected: "unknown checker expectation" };
   }
 
-  return { passed: expected === actual, expected };
+  // Runtime/Compiler: expect stdout
+  if (metadata.category === "runtime" || metadata.category === "compiler") {
+    if (metadata.stdout !== undefined) {
+      const passed = actual === metadata.stdout;
+      return {
+        passed,
+        expected: metadata.stdout,
+      };
+    }
+    return { passed: false, expected: "no stdout specified in metadata" };
+  }
+
+  // Errors: expect compilation to fail with specific error code
+  if (metadata.category === "errors") {
+    if (metadata.error) {
+      const expected = `${metadata.category.toUpperCase()}_ERROR:${metadata.error}\n`;
+      const passed = actual === expected;
+      return {
+        passed,
+        expected: passed ? `fail with ${metadata.error}` : `fail with ${metadata.error} (got: ${actual.trim()})`,
+      };
+    }
+    return { passed: false, expected: "no error code specified in metadata" };
+  }
+
+  return { passed: false, expected: "unknown category" };
 }
 
-// ---------------------------------------------------------------------------
-// Output
-// ---------------------------------------------------------------------------
+/**
+ * Format test output for console
+ */
+function formatTestResult(result: TestResult): string {
+  const label = result.passed ? colors.green("✓") : colors.red("✗");
+  const name = `${result.category}/${result.name}`;
+  const time = colors.dim(`${result.timeMs}ms`);
 
-interface TestResult {
-  name: string;
-  passed: boolean;
-  timeMs: number;
-  expected: string;
-  received: string;
+  return `${label} ${name} ${time}`;
 }
 
+/**
+ * Show diff for failed tests
+ */
+function showDiff(expected: string, received: string): void {
+  const expectedLines = expected.split("\n");
+  const receivedLines = received.split("\n");
+
+  for (let i = 0; i < Math.max(expectedLines.length, receivedLines.length); i++) {
+    const e = expectedLines[i] ?? "(missing)";
+    const r = receivedLines[i] ?? "(missing)";
+
+    if (e !== r) {
+      console.log(`  ${colors.dim("line " + (i + 1))}`);
+      console.log(`  ${colors.dim("exp:")} ${truncate(e)}`);
+      console.log(`  ${colors.dim("got:")} ${truncate(r)}`);
+      return;
+    }
+  }
+}
+
+/**
+ * Truncate long lines for display
+ */
 function truncate(line: string, max = 100): string {
   return line.length > max ? line.slice(0, max) + "…" : line;
 }
 
-function firstDifferingLine(
-  expected: string,
-  actual: string,
-): { lineNumber: number; expectedLine: string; actualLine: string } | null {
-  const expectedLines = expected.split("\n");
-  const actualLines = actual.split("\n");
-  const max = Math.max(expectedLines.length, actualLines.length);
-  for (let i = 0; i < max; i++) {
-    if (expectedLines[i] !== actualLines[i]) {
-      return {
-        lineNumber: i + 1,
-        expectedLine: expectedLines[i] ?? "(missing)",
-        actualLine: actualLines[i] ?? "(missing)",
-      };
-    }
-  }
-  return null;
-}
+/**
+ * Main test runner
+ */
+function main(): void {
+  const args = process.argv.slice(2);
+  const updateMode = args.includes("--update");
+  const categoryFilter = args.find((a) => !a.startsWith("--")) as Category | undefined;
 
-function printResult(result: TestResult) {
-  const label = result.passed ? color.green("PASS") : color.red("FAIL");
-  console.log(`${label} ${result.name} ${color.dim(`(${result.timeMs}ms)`)}`);
-
-  if (!result.passed && !update) {
-    const diff = firstDifferingLine(result.expected, result.received);
-    if (diff) {
-      console.log(`  ${color.dim(`line ${diff.lineNumber}`)}`);
-      console.log(`  ${color.dim("expected:")} ${truncate(diff.expectedLine)}`);
-      console.log(`  ${color.dim("received:")} ${truncate(diff.actualLine)}`);
-    }
-  }
-}
-
-function printSummary(results: TestResult[], totalTime: string) {
-  const passed = results.filter((r) => r.passed).length;
-  const failed = results.length - passed;
-
-  console.log(color.cyan("─".repeat(40)));
-  console.log(
-    `${color.green(`Passed: ${passed}`)}   ${failed > 0 ? color.red(`Failed: ${failed}`) : color.dim("Failed: 0")}`,
-  );
-  console.log(color.dim(`Time: ${totalTime}s`));
-  if (update) console.log(color.yellow("Snapshots written/updated where needed."));
-}
-
-// ---------------------------------------------------------------------------
-// Main
-// ---------------------------------------------------------------------------
-
-function main() {
   fs.mkdirSync(OUTPUTS_DIR, { recursive: true });
 
+  const allTests = discoverTests(categoryFilter);
   const results: TestResult[] = [];
-  const suiteStart = Date.now();
+  const startTime = Date.now();
 
-  for (const category of categories) {
-    const dir = path.join(TESTS_DIR, category);
-    const files = findDrjFiles(dir);
-    if (files.length === 0) continue;
+  if (allTests.size === 0) {
+    console.error("No generated tests found. Run: npm run generate");
+    process.exit(1);
+  }
 
-    console.log(color.cyan(color.bold(`\n${category}`)));
+  for (const [category, tests] of allTests) {
+    console.log(colors.cyan(colors.bold(`\n${category}`)));
 
-    for (const file of files) {
-      const name = `${category}/${path.relative(dir, file).replace(/\\/g, "/")}`;
+    for (const [name, metadata] of tests) {
       const testStart = Date.now();
 
-      const actual = produceActual(file, category);
-      const expectedFile = expectedPathFor(file, category);
-      const { passed, expected } = compareOrUpdate(expectedFile, actual);
+      const actual = runTest(metadata);
+      const { passed, expected } = validateTest(metadata, actual, updateMode);
+      const timeMs = Date.now() - testStart;
 
       const result: TestResult = {
         name,
+        category,
         passed,
-        timeMs: Date.now() - testStart,
+        timeMs,
         expected,
         received: actual,
       };
 
       results.push(result);
-      printResult(result);
+      console.log(formatTestResult(result));
+
+      if (!passed && !updateMode) {
+        showDiff(expected, actual);
+      }
     }
   }
 
-  const totalTime = ((Date.now() - suiteStart) / 1000).toFixed(2);
-  printSummary(results, totalTime);
+  // Summary
+  console.log(colors.cyan("\n" + "─".repeat(50)));
 
-  const failed = results.filter((r) => !r.passed);
-  if (failed.length > 0 && !update) process.exit(1);
+  const passed = results.filter((r) => r.passed).length;
+  const failed = results.length - passed;
+  const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
+
+  console.log(colors.green(`Passed: ${passed}`) + "  " + (failed > 0 ? colors.red(`Failed: ${failed}`) : colors.dim("Failed: 0")));
+  console.log(colors.dim(`Time: ${totalTime}s`));
+
+  if (updateMode) {
+    console.log(colors.yellow("Snapshots updated where needed."));
+  }
+
+  if (failed > 0 && !updateMode) {
+    process.exit(1);
+  }
 }
 
 main();
+

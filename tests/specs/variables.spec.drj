@@ -1,0 +1,191 @@
+/**
+ * DarijaCode Language Specification
+ *
+ * Section:
+ * Variables
+ *
+ * Everything inside this file describes the required behavior of
+ * variable declarations and assignments.
+ */
+
+
+/* ============================================================
+   Mutable variable (dir)
+   ============================================================ */
+
+/* @test
+name = dir-basic
+category = checker
+expect = pass
+*/
+
+dir a = 10;
+
+
+/* @test
+name = dir-reassign-number
+category = checker
+expect = pass
+*/
+
+dir a = 10;
+a = 20;
+
+
+/* @test
+name = dir-dynamic-type
+category = checker
+expect = pass
+*/
+
+dir a = 10;
+a = "hello";
+a = sa7i7;
+a = khawi;
+
+
+/* ============================================================
+   Immutable variable (khli)
+   ============================================================ */
+
+/* @test
+name = khli-basic
+category = checker
+expect = pass
+*/
+
+khli a = 10;
+
+
+/* @test
+name = khli-reassign
+category = checker
+expect = fail
+error = CHECKER_IMMUTABLE_ASSIGNMENT
+*/
+
+khli a = 10;
+a = 20;
+
+
+/* ============================================================
+   Explicit typing
+   ============================================================ */
+
+/* @test
+name = explicit-number
+category = checker
+expect = pass
+*/
+
+dir a: ra9m = 10;
+
+
+/* @test
+name = explicit-number-invalid
+category = checker
+expect = fail
+error = CHECKER_TYPE_MISMATCH
+*/
+
+dir a: ra9m = "hello";
+
+
+/* @test
+name = explicit-string
+category = checker
+expect = pass
+*/
+
+dir a: nass = "hello";
+
+
+/* @test
+name = explicit-string-invalid
+category = checker
+expect = fail
+error = CHECKER_TYPE_MISMATCH
+*/
+
+dir a: nass = 15;
+
+
+/* ============================================================
+   Type inference
+   ============================================================ */
+
+/* @test
+name = infer-number
+category = checker
+expect = pass
+*/
+
+dir a := 10;
+
+
+/* @test
+name = infer-string
+category = checker
+expect = pass
+*/
+
+dir a := "hello";
+
+
+/* ============================================================
+   khawi
+   ============================================================ */
+
+/* @test
+name = infer-khawi
+category = checker
+expect = pass
+*/
+
+dir a = khawi;
+
+
+/* ============================================================
+   Undefined variable
+   ============================================================ */
+
+/* @test
+name = use-before-declare
+category = checker
+expect = fail
+error = CHECKER_UNDEFINED_VARIABLE
+*/
+
+kteb(a);
+
+
+/* ============================================================
+   Shadowing
+   ============================================================ */
+
+/* @test
+name = shadow-local
+category = checker
+expect = pass
+*/
+
+dir a = 10;
+
+dalla test() {
+    dir a = 20;
+}
+
+
+/* ============================================================
+   Duplicate declaration
+   ============================================================ */
+
+/* @test
+name = duplicate-variable
+category = checker
+expect = fail
+error = CHECKER_DUPLICATE_VARIABLE
+*/
+
+dir a = 10;
+dir a = 20;

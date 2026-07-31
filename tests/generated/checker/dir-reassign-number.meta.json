@@ -1,0 +1,8 @@
+{
+  "name": "dir-reassign-number",
+  "category": "checker",
+  "source": null,
+  "spec": "tests/specs/variables.spec.drj",
+  "line": 25,
+  "expect": "pass"
+}

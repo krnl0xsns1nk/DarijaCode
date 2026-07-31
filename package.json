@@ -33,21 +33,20 @@
   ],
   "scripts": {
     "prepublishOnly": "npm run setup",
-
     "build": "tsc && tsc-alias && chmod +x dist/cli.js",
     "start": "node dist/compiler/index.js",
-
     "dev": "ts-node -r tsconfig-paths/register src/cli.ts",
-
     "setup": "npm run build && npm link",
-    "test": "ts-node -r tsconfig-paths/register scripts/test.ts all",
-    "test:update": "ts-node -r tsconfig-paths/register scripts/test.ts all --update",
-    "test:lexer": "ts-node scripts/test.ts lexer",
-    "test:parser": "ts-node scripts/test.ts parser",
-    "test:checker": "ts-node scripts/test.ts checker",
-    "test:compiler": "ts-node scripts/test.ts compiler",
-    "test:runtime": "ts-node scripts/test.ts runtime",
-    "test:errors": "ts-node scripts/test.ts errors"
+    "setup-test": "bash scripts/setup-tests.sh",
+    "test": "npm run generate && ts-node -r tsconfig-paths/register scripts/test.ts",
+    "test:update": "npm run generate && ts-node -r tsconfig-paths/register scripts/test.ts --update",
+    "test:lexer": "npm run generate && ts-node -r tsconfig-paths/register scripts/test.ts lexer",
+    "test:parser": "npm run generate && ts-node -r tsconfig-paths/register scripts/test.ts parser",
+    "test:checker": "npm run generate && ts-node -r tsconfig-paths/register scripts/test.ts checker",
+    "test:compiler": "npm run generate && ts-node -r tsconfig-paths/register scripts/test.ts compiler",
+    "test:runtime": "npm run generate && ts-node -r tsconfig-paths/register scripts/test.ts runtime",
+    "test:errors": "npm run generate && ts-node -r tsconfig-paths/register scripts/test.ts errors",
+    "generate": "ts-node -r tsconfig-paths/register scripts/generate-tests.ts"
   },
   "devDependencies": {
     "@types/node": "^26.1.0",

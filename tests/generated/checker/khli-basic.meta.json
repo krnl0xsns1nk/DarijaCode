@@ -1,0 +1,8 @@
+{
+  "name": "khli-basic",
+  "category": "checker",
+  "source": null,
+  "spec": "tests/specs/variables.spec.drj",
+  "line": 51,
+  "expect": "pass"
+}
