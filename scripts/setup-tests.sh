@@ -17,6 +17,7 @@ if [[ "$REPLY" != "YES" ]]; then
     exit 1
 fi
 
+echo " "
 # Color utilities
 c_green()  { printf '\033[32m%s\033[0m' "$1"; }
 c_red()    { printf '\033[31m%s\033[0m' "$1"; }

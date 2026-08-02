@@ -73,6 +73,9 @@ export class Lexer {
         ) {
           this.advance();
         }
+        if (this.isEnd()){
+          this.error("lmilf sala 9bal maysali tta3li9", "DCE22", "sd tta3li9 dyalk b '*/'")
+        }
         this.advance();
         this.advance();
 
@@ -174,7 +177,7 @@ export class Lexer {
 
         case "|":
           if (this.match("|")) this.simple(TokenType.OR, "||");
-          else this.error("twa93na ||", "DCE12");
+          else this.error("twa93na ||", "DCE21");
           break;
 
         case ".":
@@ -229,13 +232,14 @@ export class Lexer {
     while (this.isDigit(this.peek()) || this.peek() === "_") {
       value += this.advance();
     }
-
     if (this.peek() === "." && this.isDigit(this.peek(1))) {
       value += this.advance();
       while (this.isDigit(this.peek())) {
         value += this.advance();
       }
     }
+
+    this.validateNumber(value);
 
     this.add(TokenType.NUMBER, value.replaceAll("_", ""), line, column);
   }
@@ -259,8 +263,24 @@ export class Lexer {
           case "t":
             value += "\t";
             break;
+          case '"':
+            value += '\"';
+            break;
+          case "'":
+            value += "\'";
+            break;
+          case "\\":
+            value += "\\";
+            break;
+          case "r":
+            value += "\r";
+            break;
+          case "0":
+            value += "\0";
+            break;
           default:
-            value += next;
+            this.error(`ramz mmtw9ch more '\\' : ${next}`, "DCE20", `dir chi ramz mojod bhal : \\n, \\t, \\r, \\", \\'`, start );
+          
         }
       } else {
         value += char;
@@ -331,6 +351,31 @@ export class Lexer {
 
   private isIdentifierPart(c: string) {
     return /[a-zA-Z0-9_]/.test(c);
+  }
+
+  private validateNumber(value: string): void {
+  if (value.startsWith("_")) {
+    this.invalidNumber();
+  }
+
+  if (value.endsWith("_")) {
+    this.invalidNumber();
+  }
+
+  if (value.endsWith(".")) {
+    this.invalidNumber();
+  }
+
+  if (value.includes("__")) {
+    this.invalidNumber();
+  }
+
+  if (value.includes("..")) {
+    this.invalidNumber();
+  }
+}
+  private invalidNumber():never {
+      this.error("3adad mmktobch mzyan awla ghalat flktaba", "DCE23", "ktab l3adad m9ad Allah ihdik")
   }
 
 

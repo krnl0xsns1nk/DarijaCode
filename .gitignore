@@ -145,3 +145,5 @@ vite.config.ts.timestamp-*
 docs/futur.md
 ./docs/futur.md
 
+# test files
+tests/generated

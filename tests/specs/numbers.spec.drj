@@ -1,0 +1,229 @@
+/**
+ * ==========================================
+ * DarijaCode Language Specification
+ * Numbers & Numeric Literals
+ * ==========================================
+ *
+ * This file defines the expected behavior of
+ * numeric literals and printing numbers.
+ */
+
+
+/*=
+========================================
+Basic integer literals
+========================================
+*/
+
+/* @test
+name = number-zero
+category = runtime
+stdout = 0
+*/
+kteb(0);
+
+/* @test
+name = number-positive
+category = runtime
+stdout = 42
+*/
+kteb(42);
+
+/* @test
+name = number-large
+category = runtime
+stdout = 123456789
+*/
+kteb(123456789);
+
+
+/*=
+========================================
+Underscore separators
+========================================
+*/
+
+/* @test
+name = underscore-single
+category = runtime
+stdout = 1000
+*/
+kteb(1_000);
+
+/* @test
+name = underscore-multiple
+category = runtime
+stdout = 123456789
+*/
+kteb(123_456_789);
+
+
+/*=
+========================================
+Floating point literals
+========================================
+*/
+
+/* @test
+name = float-basic
+category = runtime
+stdout = 3.14
+*/
+kteb(3.14);
+
+/* @test
+name = float-zero
+category = runtime
+stdout = 0.5
+*/
+kteb(0.5);
+
+/* @test
+name = float-large
+category = runtime
+stdout = 1000.25
+*/
+kteb(1000.25);
+
+
+/*=
+========================================
+Invalid numeric literals
+========================================
+*/
+
+/* @test
+name = invalid-trailing-underscore
+category = checker
+expect = fail
+error = DCE23
+*/
+kteb(123_);
+
+/* @test
+name = invalid-leading-underscore
+category = checker
+expect = fail
+error = DCE23
+*/
+kteb(_123);
+
+/* @test
+name = invalid-double-underscore
+category = checker
+expect = fail
+error = DCE23
+*/
+kteb(1__000);
+
+/* @test
+name = invalid-trailing-dot
+category = checker
+expect = fail
+error = DCE23
+*/
+kteb(123.);
+
+/* @test
+name = invalid-double-dot
+category = checker
+expect = fail
+error = DCE23
+*/
+kteb(12..34);
+
+/* @test
+name = invalid-underscore-before-dot
+category = checker
+expect = fail
+error = DCE23
+*/
+kteb(12_.5);
+
+/* @test
+name = invalid-underscore-after-dot
+category = checker
+expect = fail
+error = DCE23
+*/
+kteb(12._5);
+
+
+/*=
+========================================
+Variables
+========================================
+*/
+
+/* @test
+name = variable-number
+category = runtime
+stdout = 10
+*/
+dir x = 10;
+kteb(x);
+
+/* @test
+name = variable-float
+category = runtime
+stdout = 1.5
+*/
+dir y = 1.5;
+kteb(y);
+
+/* @test
+name = variable-underscore
+category = runtime
+stdout = 1000000
+*/
+dir million = 1_000_000;
+kteb(million);
+
+
+/*=
+========================================
+Arithmetic
+========================================
+*/
+
+/* @test
+name = add
+category = runtime
+stdout = 30
+*/
+kteb(10 + 20);
+
+/* @test
+name = subtract
+category = runtime
+stdout = 7
+*/
+kteb(10 - 3);
+
+/* @test
+name = multiply
+category = runtime
+stdout = 42
+*/
+kteb(6 * 7);
+
+/* @test
+name = divide
+category = runtime
+stdout = 5
+*/
+kteb(20 / 4);
+
+/* @test
+name = precedence
+category = runtime
+stdout = 14
+*/
+kteb(2 + 3 * 4);
+
+/* @test
+name = parentheses
+category = runtime
+stdout = 20
+*/
+kteb((2 + 3) * 4);

@@ -11,10 +11,11 @@
  *   - Generated .drj files in tests/generated/<category>/
  *   - Metadata .meta.json files describing expected outcomes
  */
-
+// @ts-ignore
 import * as fs from "fs";
+// @ts-ignore
 import * as path from "path";
-
+// @ts-ignore
 const ROOT = path.resolve(__dirname, "..");
 const SPECS_DIR = path.join(ROOT, "tests", "specs");
 const GENERATED_DIR = path.join(ROOT, "tests", "generated");
@@ -223,14 +224,15 @@ function main(): void {
 
   if (!fs.existsSync(SPECS_DIR)) {
     console.error(`Error: ${SPECS_DIR} does not exist`);
+    // @ts-ignore
     process.exit(1);
   }
 
   // Collect all spec files
   const specFiles = fs
     .readdirSync(SPECS_DIR)
-    .filter((f) => f.endsWith(".drj"))
-    .map((f) => path.join(SPECS_DIR, f))
+    .filter((f:any) => f.endsWith(".drj"))
+    .map((f:any) => path.join(SPECS_DIR, f))
     .sort();
 
   if (specFiles.length === 0) {
@@ -238,7 +240,7 @@ function main(): void {
     return;
   }
 
-  console.log(`📋 Scanning ${specFiles.length} spec file(s)...`);
+  console.log(`   Scanning ${specFiles.length} spec file(s)...`);
 
   let totalTests = 0;
   const categoryCounts: Record<string, number> = {};
