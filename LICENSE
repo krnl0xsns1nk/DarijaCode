@@ -1,130 +1,59 @@
-DarijaCode Community License (DCL) v1.0
-
+DarijaCode Community License (DCL) v2.0
 Copyright (c) 2026–present, krnl0xsns1nk and DarijaCode contributors.
 
-This is a custom license. It is not a standard OSI-approved license — read
-it, don't assume it matches something you've seen before.
+Plain-language summary
+- You may use, copy, modify, and distribute DarijaCode (the “Project”) for any purpose, including commercial use.
+- You must keep this license and give visible credit to the original project.
+- You must not present a copy or fork as the official DarijaCode project. Community forks must identify themselves as a community fork and use a community name (see §4).
+- If the Maintainer is inactive for 6 months, the community is explicitly permitted to continue the Project as a clearly labeled community fork.
+- The Project is provided “as is” with no warranty.
 
----
+Full terms
 
-## Plain-language summary (not a substitute for the terms below)
+1. Definitions
+1.1 “Project” means the source code, documentation, and files contained in this repository.
+1.2 “You” means any person or organization using, copying, modifying, or distributing the Project.
+1.3 “Derivative Tool” means software that works alongside the Project (editor, plugin, docs site, linter, package tool, etc.) but is not a redistribution of the Project itself.
+1.4 “Maintainer” means the project owner (krnl0xsns1nk) or anyone the Maintainer designates in writing.
+1.5 “Community Fork” means a redistribution of the Project that continues development independently while complying with Section 5.
 
--  Install it, run it, change it, learn from it, do basically whatever you want with it.
--  Build extra tools around it — an IDE, docs, an editor, error tooling, new language features — as your own separate project.
--  Fork it, fix it, ship your own build.
+2. Grant of rights
+2.1 Subject to these terms, You are granted a worldwide, royalty-free, non-exclusive license to:
+  a) use, reproduce, modify, and distribute the Project in source or binary form; and
+  b) create and distribute Derivative Tools under any license You choose.
 
--  Don't take this project and present it as something you created. Keep the credit where it belongs.
--  Don't publish a fork and call it "DarijaCode" as if it's the original, official project.
+3. Attribution and redistribution requirements
+3.1 Any copy or substantial portion of the Project that You distribute (modified or not) must:
+  a) include an unmodified copy of this license file; and
+  b) include a visible credit naming the original author (“krnl0xsns1nk”) and a link to the original repository.
+3.2 If You distribute a modified version, You must clearly state that the Project was modified.
+3.3 If You distribute compiled or binary forms (including for commercial sale), You must either:
+  a) include the complete corresponding source code for that exact release, or
+  b) include a prominent, permanent link to a freely accessible copy of the exact source (for example, a repository URL and commit/tag),
+  and in all cases include this license file.
 
-- 🕊️ If the maintainer goes quiet for a long stretch, the community is free to keep this project alive — fixes, releases, all of it — until the maintainer returns, if ever.
+4. No misrepresentation; naming
+4.1 You must not claim authorship of the original Project or present a copy, fork, or modified version as the official DarijaCode project.
+4.2 Community forks and redistributions MAY NOT use the exact name “DarijaCode” by itself as their project name or brand. They must choose an identifying name and clearly label themselves as a community fork. Acceptable examples:
+  - “MyLang — a community fork of DarijaCode”
+  - “Community of DarijaCode — maintained by [group/person]”
+4.3 Derivative Tools (editors, plugins, docs sites) may reference DarijaCode and say they are “for DarijaCode” but must not claim they are the original compiler or official project.
 
-If anything below conflicts with this summary, the terms below control.
+5. Community stewardship (inactivity)
+5.1 The Maintainer is “active” if they have at least one commit in the canonical repository within the previous six (6) months.
+5.2 If the Maintainer is inactive by that measure, the community is explicitly permitted, without further permission, to fork and continue development and releases, provided the community fork:
+  a) clearly identifies itself as community-maintained (e.g., “Community of DarijaCode”); and
+  b) complies with Sections 3 and 4 (attribution and no misrepresentation).
+5.3 This clause does not transfer copyright or ownership; it is a standing permission to avoid blocking continued maintenance.
 
----
+6. Termination
+6.1 Your rights under this license terminate automatically if You materially breach Section 4 and fail to cure the breach within thirty (30) days after written notice.
+6.2 Termination does not affect rights previously granted to third parties who received the Project lawfully from You.
 
-## 1. Definitions
+7. Disclaimer of warranty and limitation of liability
+7.1 The Project is provided “as is,” without warranty of any kind. To the fullest extent allowed by law, the Maintainer and contributors are not liable for any damages arising from use of the Project.
 
-- **"The Project"** means the DarijaCode source code, documentation, and
-  associated files in this repository.
-- **"You"** means anyone using, copying, modifying, or distributing the
-  Project under this license.
-- **"Derivative Tool"** means a separate piece of software that works with
-  or alongside the Project — an editor, IDE plugin, documentation site,
-  linter, error formatter, package manager frontend, new-feature add-on,
-  and so on — but is not itself a redistribution of the Project as a
-  whole.
-- **"The Maintainer"** means krnl0xsns1nk, the original author of the
-  Project, or anyone the Maintainer formally designates in writing.
-
-## 2. What you're permitted to do
-
-You are granted a free, worldwide, royalty-free license to:
-
-1. **Use** the Project for any purpose, personal or commercial.
-2. **Study and learn from** the source code.
-3. **Modify** the source code, for your own use or to contribute back.
-4. **Copy and redistribute** the Project, or your modified version of it,
-   subject to Section 3 (Attribution) and Section 4 (No Misrepresentation)
-   below.
-5. **Build and distribute Derivative Tools** — an IDE, a docs site, a code
-   editor, error-handling libraries, new language features, package
-   registries, and so on — under any license you choose, including
-   proprietary or commercial ones, as long as the Derivative Tool does not
-   itself claim to *be* DarijaCode (see Section 4).
-
-## 3. Attribution
-
-Any copy or substantial redistribution of the Project, modified or not,
-must:
-
-1. Keep this license file intact.
-2. Retain a visible credit to the original author and a link to the
-   original repository, in the copy's README or an equally prominent
-   location.
-3. Clearly state, if modified, that changes were made.
-
-## 4. No misrepresentation of authorship or origin
-
-This is the core restriction of this license, and the main reason it
-isn't a plain MIT/ISC license:
-
-1. You may **not** present the Project, or a fork of it, as your own
-   original creation.
-2. You may **not** publish a fork, rebrand, or redistribution in a way
-   that implies it is the official or original DarijaCode project, unless
-   you are the Maintainer or have been designated as a steward under
-   Section 5.
-3. Forks are welcome and encouraged, but must be clearly labeled as a
-   fork or derivative (e.g. "MyLang, a DarijaCode fork") — not presented
-   as if it were the primary project or as if you created it from
-   scratch.
-4. Derivative Tools (Section 2.5) are exempt from labeling themselves as
-   a "fork," since they are separate works — but they may not claim to
-   have authored the DarijaCode language or compiler itself.
-
-## 5. Maintainer inactivity and community stewardship
-
-This project is maintained by one person, for fun, with no promises about
-how long that continues. So:
-
-1. **Active** means the Maintainer has made at least one commit to the
-   main repository within the preceding **6 months**.
-2. If the Project becomes **inactive** by that definition, the community
-   is explicitly permitted, without needing to ask, to:
-   - Fork the repository and continue development, bug fixes, and
-     releases under this same license.
-   - Coordinate a community-maintained fork as the de facto continuation
-     of the project, clearly labeled as community-maintained (per
-     Section 4.3) for as long as the Maintainer remains inactive.
-3. If the Maintainer resumes committing to the original repository, the
-   original repository remains the canonical project, and community
-   forks are expected to acknowledge this and may merge their work back
-   if the Maintainer is willing.
-4. This clause does not transfer copyright or ownership — it is a
-   standing permission to fork, maintain, and release, granted in
-   advance, so the community never has to wait for a response that may
-   never come.
-
-## 6. No warranty
-
-The Project is provided "as is," without warranty of any kind, express or
-implied, including but not limited to warranties of merchantability,
-fitness for a particular purpose, and non-infringement. In no event shall
-the Maintainer or contributors be liable for any claim, damages, or other
-liability arising from the Project or its use.
-
-## 7. Termination
-
-Your rights under this license terminate automatically if you violate
-Section 4 (No Misrepresentation) and do not correct the violation within
-30 days of being notified. All other rights survive termination for
-copies already lawfully distributed.
-
----
-
-*This license was written in plain terms to match how the Maintainer
-actually wants this project used. If you need a legally binding
-interpretation for a specific situation (e.g. enterprise use, a
-large-scale fork, a dispute), consult a lawyer — this document has not
-been reviewed by one.*
+8. Trademarks and other rights
+8.1 This license does not grant any trademark rights. Use of the name “DarijaCode” as a trademark or service mark requires separate permission from the Maintainer.
+8.2 If You require legal certainty (for commercial or enterprise use), consult a lawyer.
 

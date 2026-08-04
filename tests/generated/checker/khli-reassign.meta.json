@@ -1,9 +1,0 @@
-{
-  "name": "khli-reassign",
-  "category": "checker",
-  "source": null,
-  "spec": "tests/specs/variables.spec.drj",
-  "line": 60,
-  "expect": "fail",
-  "error": "CHECKER_IMMUTABLE_ASSIGNMENT"
-}

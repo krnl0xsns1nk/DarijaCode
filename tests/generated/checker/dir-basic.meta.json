@@ -1,8 +1,0 @@
-{
-  "name": "dir-basic",
-  "category": "checker",
-  "source": null,
-  "spec": "tests/specs/variables.spec.drj",
-  "line": 16,
-  "expect": "pass"
-}

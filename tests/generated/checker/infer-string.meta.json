@@ -1,8 +1,0 @@
-{
-  "name": "infer-string",
-  "category": "checker",
-  "source": null,
-  "spec": "tests/specs/variables.spec.drj",
-  "line": 126,
-  "expect": "pass"
-}

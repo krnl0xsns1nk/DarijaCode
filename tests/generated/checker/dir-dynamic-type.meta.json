@@ -1,8 +1,0 @@
-{
-  "name": "dir-dynamic-type",
-  "category": "checker",
-  "source": null,
-  "spec": "tests/specs/variables.spec.drj",
-  "line": 35,
-  "expect": "pass"
-}

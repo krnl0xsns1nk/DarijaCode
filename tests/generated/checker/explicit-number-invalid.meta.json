@@ -1,9 +1,0 @@
-{
-  "name": "explicit-number-invalid",
-  "category": "checker",
-  "source": null,
-  "spec": "tests/specs/variables.spec.drj",
-  "line": 84,
-  "expect": "fail",
-  "error": "CHECKER_TYPE_MISMATCH"
-}

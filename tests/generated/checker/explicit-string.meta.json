@@ -1,8 +1,0 @@
-{
-  "name": "explicit-string",
-  "category": "checker",
-  "source": null,
-  "spec": "tests/specs/variables.spec.drj",
-  "line": 94,
-  "expect": "pass"
-}

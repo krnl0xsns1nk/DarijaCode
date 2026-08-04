@@ -1,8 +1,0 @@
-{
-  "name": "shadow-local",
-  "category": "checker",
-  "source": null,
-  "spec": "tests/specs/variables.spec.drj",
-  "line": 166,
-  "expect": "pass"
-}
