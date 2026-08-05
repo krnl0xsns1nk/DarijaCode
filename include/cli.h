@@ -1,12 +1,13 @@
 #pragma once
+#include "types.h"
 
 typedef struct {
   const char *name;
-  int (*fn)(int argc, char *argv[]);
+  Result (*fn)(int argc, char *argv[]);
 } Command;
 
 extern Command commands[];
 extern const size_t cmdsCount;
 
-int showHelp(int argc, char *argv[]);
-int run(int argc, char *argv[]);
+Result showHelp(int argc, char *argv[]);
+Result run(int argc, char *argv[]);

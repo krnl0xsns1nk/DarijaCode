@@ -6,12 +6,27 @@ int main(int argc, char **argv){
     showHelp(argc, argv);
     return 0;
   }
-  for (int i=0; i < cmdsCount; i++){
-    
+  
+  Result result = {
+    .status = ok,
+    .msg = NULL
+  };
+
+  // maping to see if the argv[1] exist in our commands to excute it
+  for (size_t i=0; i < cmdsCount; i++){
+
     if(strcmp(argv[1], commands[i].name) ==0){
-      return commands[i].fn(argc, argv);
+      result = commands[i].fn(argc, argv);
+
+    if (result.status != ok){
+      printf("%s", result.msg);
+      return 1;
+    }
+      return 0;
     }
   }
+
+
   showHelp(argc, argv);
   return 0;
 }
