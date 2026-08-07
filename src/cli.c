@@ -2,6 +2,7 @@
 #include "cli.h"
 #include "compile.h"
 #include "readfile.h"
+#include "ext.h"
 
 Command commands[] = {
   {"khdm", run},
@@ -39,6 +40,12 @@ Result run(int argc, char *argv[]){
 
   Result result;
 
+  if (!hasExt(argv[2], ".drj")){
+    return (Result){
+      .status = cliErr,
+      .msg = "khas lmilf ikon bsighat '.drj'"
+    };
+  }
   char *code = readFile(argv[2]);
 
   if (code == NULL){

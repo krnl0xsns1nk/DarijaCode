@@ -10,9 +10,13 @@ char *readFile(const char *path){
   }
   fseek(file, 0, SEEK_END);
 
-  long size = ftell(file);
+  long fileSize = ftell(file);
 
+  if (fileSize < 0){
+    return NULL;
+  }
   rewind(file);
+  size_t size = (size_t)fileSize;
 
   char *buffer = malloc(size + 1);
 
