@@ -12,6 +12,7 @@ typedef enum {
 typedef struct {
   Status status;
   char *msg;
+  char *data;
 } Result;
 
 // Token.Types
@@ -21,7 +22,8 @@ typedef enum {
   LPAREN,
   STRING,
   RPAREN,
-  NEWLINE
+  NEWLINE,
+  UNKNOWN
 } TokenType;
 
 typedef struct {

@@ -10,10 +10,17 @@ bool isWhiteSpace(char c){ return c == ' '; }
 bool isNewLine(char c){ return c == '\n'; }
 bool isUnderScore(char c){ return c == '_'; }
 bool isDollar(char c){ return c == '$'; }
-bool isSymbol(char c){ return c == '(' || c == ')';}
 bool maybeIdent(char c){ return isChar(c) || isDollar(c) || isUnderScore(c);}
 bool canItBeIdent(char c){ return maybeIdent(c) || isDigit(c);}
 Result memErr(void){ return (Result){ .status = memoryErr, .msg = "not enough memory" };}
+bool isSymbol(char c){ 
+  return c == '(' || c == ')';
+}
+TokenType getSymbol(char c){
+  if (c == '(') return LPAREN;
+  if (c == ')') return RPAREN;
+  return UNKNOWN;
+}
 
 bool initTmp(Tmp *TMP){
   TMP->i = 0;

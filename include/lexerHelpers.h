@@ -10,10 +10,11 @@ bool isWhiteSpace(char c);
 bool isNewLine(char c);
 bool isUnderScore(char c);
 bool isDollar(char c);
-bool isSymbol(char c);
 bool maybeIdent(char c);
 bool canItBeIdent(char c);
 Result memErr(void);
+bool isSymbol(char c);
+TokenType getSymbol(char c);
 
 bool initTmp(Tmp *TMP);
 bool growTmp(Tmp *TMP);

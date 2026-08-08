@@ -43,8 +43,23 @@ Result Lexer(const char *code, TokenList *List){
       char value[] = "newline";
       result = pushToken(List, NEWLINE, value); if (result.status != ok){ return result; }
 
+    } else if (isSymbol(c)){
+      printf("%c\n", c);
+      TokenType type = getSymbol(c);
+      if (type == UNKNOWN){
+        char data[2]; data[0] = c; data[1] = '\0';
+        return (Result){
+          .status = lexerErr,
+          .msg = "hada machi ramz kan3rfoh\n",
+          .data = strdup(data)
+        };
+      }
+      char value[2]; value [0] = c; value [1] = '\0';
+      result = pushToken(List, type, value); if (result.status != ok){ return result;}
+      
     } else {
-      return (Result){ .status = lexerErr, .msg = "no valid symbol" };
+      char data[2]; data[0] = c; data[1] = '\0';
+      return (Result){ .status = lexerErr, .msg = "no valid symbol", .data = strdup(data) };
     }
     cursor++;
   }

@@ -20,6 +20,8 @@ int main(int argc, char **argv){
 
     if (result.status != ok){
       printf("%s", result.msg);
+      printf("%s\n", result.data);
+      free(result.data);
       return 1;
     }
       return 0;
