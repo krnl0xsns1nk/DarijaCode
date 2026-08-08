@@ -11,8 +11,12 @@ void initTokens(TokenList *List){
 
 Result pushToken(TokenList *List, TokenType type, char *value){
   if (List->capacity <= List->count){
-    List->capacity += 5;
-    Token *tmp = realloc(List->items, List->capacity * sizeof(Token));
+    printf("growing token list: %zu -> %zu\n",
+       List->capacity,
+       List->capacity + 5);
+
+    size_t newCap = List->capacity + 5;
+    Token *tmp = realloc(List->items, newCap * sizeof(Token));
     if (tmp == NULL){
       printf("oops!");
       return (Result){
@@ -20,6 +24,7 @@ Result pushToken(TokenList *List, TokenType type, char *value){
         .msg = "no availabe memory !"
       };
     }
+    List->capacity = newCap;
     List->items = tmp;
   }
   List->items[List->count] = (Token){
@@ -48,10 +53,12 @@ void printTokens(TokenList *List){
     "KTEB",
     "LPAREN",
     "STRING",
-    "RPAREN"
-  };
-
+    "RPAREN",
+    "NEWLINE"
+ };
+  printf("{\n");
   for (size_t i=0; i < List->count; i++){
-    printf("token: %s 》type: %s\n", List->items[i].value, keys[List->items[i].type]);
+    printf("\t{ %s : %s },\n", List->items[i].value, keys[List->items[i].type]);    
   };
+  printf("}\n");
 }

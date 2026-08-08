@@ -21,6 +21,7 @@ typedef enum {
   LPAREN,
   STRING,
   RPAREN,
+  NEWLINE
 } TokenType;
 
 typedef struct {
