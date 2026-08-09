@@ -147,3 +147,8 @@ docs/futur.md
 
 # test files
 tests/generated
+
+
+# Added by cargo
+
+/target
