@@ -61,7 +61,12 @@ bool checkTmp(Tmp *TMP){
   return true;
 }
 
-bool isNotOk(Result *result){
-  return result->status != ok;
+void move(MoveInf *mvInf){
+  mvInf->cursor++;
+  if (isNewLine(*mvInf->cursor)){
+    mvInf->line++;
+    mvInf->column = 0;
+    return;
+  }
+  mvInf->column++;
 }
-

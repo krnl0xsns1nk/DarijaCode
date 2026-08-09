@@ -13,6 +13,8 @@ typedef struct {
   Status status;
   char *msg;
   char *data;
+  size_t line;
+  size_t column;
 } Result;
 
 // Token.Types

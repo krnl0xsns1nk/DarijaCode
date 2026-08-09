@@ -22,6 +22,5 @@ void freeTmp(Tmp *TMP);
 
 bool checkTmp(Tmp *TMP);
 
-bool isNotOk(Result *reslut);
-
+void move(MoveInf *mvInf);
 // Result readIdent(const char **cursor, Tmp *TMP);

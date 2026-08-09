@@ -19,9 +19,10 @@ int main(int argc, char **argv){
       result = commands[i].fn(argc, argv);
 
     if (result.status != ok){
-      printf("%s", result.msg);
-      printf("%s\n", result.data);
+      printf("%s '", result.msg);
+      printf("%s' at ", result.data);
       free(result.data);
+      printf("%zu:%zu\n", result.line, result.column);
       return 1;
     }
       return 0;
