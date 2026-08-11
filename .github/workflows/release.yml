@@ -5,12 +5,14 @@ on:
     tags:
       - "*-v*"
 
-  workflow_dispatch:
-
 permissions:
   contents: write
 
 jobs:
+  # ============================================================
+  # Linux, macOS and Windows
+  # ============================================================
+
   build:
     name: Build ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
@@ -20,37 +22,49 @@ jobs:
 
       matrix:
         include:
+          # ------------------------------------------------------
           # Linux x86_64
+          # ------------------------------------------------------
           - name: linux-x86_64
             target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
             binary: drj-linux-x86_64
 
+          # ------------------------------------------------------
           # Linux ARM64
+          # ------------------------------------------------------
           - name: linux-aarch64
             target: aarch64-unknown-linux-gnu
             os: ubuntu-24.04-arm
             binary: drj-linux-aarch64
 
+          # ------------------------------------------------------
           # macOS x86_64
+          # ------------------------------------------------------
           - name: macos-x86_64
             target: x86_64-apple-darwin
             os: macos-15-intel
             binary: drj-macos-x86_64
 
+          # ------------------------------------------------------
           # macOS ARM64
+          # ------------------------------------------------------
           - name: macos-aarch64
             target: aarch64-apple-darwin
             os: macos-14
             binary: drj-macos-aarch64
 
+          # ------------------------------------------------------
           # Windows x86_64
+          # ------------------------------------------------------
           - name: windows-x86_64
             target: x86_64-pc-windows-msvc
             os: windows-latest
             binary: drj-windows-x86_64.exe
 
+          # ------------------------------------------------------
           # Windows ARM64
+          # ------------------------------------------------------
           - name: windows-aarch64
             target: aarch64-pc-windows-msvc
             os: windows-11-arm
@@ -58,7 +72,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -81,12 +95,22 @@ jobs:
               "release/${{ matrix.binary }}"
           fi
 
+      - name: Verify binary
+        shell: bash
+        run: |
+          ls -lh "release/${{ matrix.binary }}"
+          file "release/${{ matrix.binary }}" || true
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.binary }}
           path: release/${{ matrix.binary }}
 
+
+  # ============================================================
+  # Android
+  # ============================================================
 
   build-android:
     name: Build ${{ matrix.name }}
@@ -97,50 +121,94 @@ jobs:
 
       matrix:
         include:
+          # ------------------------------------------------------
           # Android ARM64
+          # ------------------------------------------------------
           - name: android-aarch64
             target: aarch64-linux-android
             binary: drj-android-aarch64
             linker: aarch64-linux-android21-clang
 
+          # ------------------------------------------------------
           # Android ARMv7 32-bit
+          # ------------------------------------------------------
           - name: android-armv7
             target: armv7-linux-androideabi
             binary: drj-android-armv7
-            linker: armv7a-linux-androideabi16-clang
+            linker: armv7a-linux-androideabi21-clang
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
 
+      # --------------------------------------------------------
+      # Android SDK
+      # --------------------------------------------------------
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
-        with:
-          packages: ""
 
       - name: Install Android NDK
         shell: bash
         run: |
           sdkmanager "platform-tools" "platforms;android-35" "ndk;27.2.12479018"
 
-      - name: Configure Android NDK
+      # --------------------------------------------------------
+      # Android linker
+      # --------------------------------------------------------
+
+      - name: Configure Android linker
         shell: bash
         run: |
           NDK="$ANDROID_SDK_ROOT/ndk/27.2.12479018"
           TOOLCHAIN="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
 
-          echo "ANDROID_NDK_HOME=$NDK" >> "$GITHUB_ENV"
+          LINKER="$TOOLCHAIN/${{ matrix.linker }}"
 
-          echo "CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$TOOLCHAIN/aarch64-linux-android21-clang" >> "$GITHUB_ENV"
-          echo "CARGO_TARGET_ARMV7_LINUX_ANDROIDEABI_LINKER=$TOOLCHAIN/armv7a-linux-androideabi16-clang" >> "$GITHUB_ENV"
+          echo "Using Android linker:"
+          echo "$LINKER"
+
+          if [[ ! -x "$LINKER" ]]; then
+            echo "ERROR: Android linker does not exist:"
+            echo "$LINKER"
+            echo
+            echo "Available ARM Android linkers:"
+            ls "$TOOLCHAIN"/armv7a-linux-androideabi*-clang 2>/dev/null || true
+            ls "$TOOLCHAIN"/aarch64-linux-android*-clang 2>/dev/null || true
+            exit 1
+          fi
+
+          case "${{ matrix.target }}" in
+            aarch64-linux-android)
+              echo "CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$LINKER" >> "$GITHUB_ENV"
+              ;;
+
+            armv7-linux-androideabi)
+              echo "CARGO_TARGET_ARMV7_LINUX_ANDROIDEABI_LINKER=$LINKER" >> "$GITHUB_ENV"
+              ;;
+
+            *)
+              echo "Unsupported Android target:"
+              echo "${{ matrix.target }}"
+              exit 1
+              ;;
+          esac
+
+      # --------------------------------------------------------
+      # Build
+      # --------------------------------------------------------
 
       - name: Build
         run: cargo build --release --target ${{ matrix.target }}
+
+      # --------------------------------------------------------
+      # Package
+      # --------------------------------------------------------
 
       - name: Prepare binary
         shell: bash
@@ -150,12 +218,22 @@ jobs:
           cp "target/${{ matrix.target }}/release/drj" \
             "release/${{ matrix.binary }}"
 
+      - name: Verify binary
+        shell: bash
+        run: |
+          ls -lh "release/${{ matrix.binary }}"
+          file "release/${{ matrix.binary }}"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.binary }}
           path: release/${{ matrix.binary }}
 
+
+  # ============================================================
+  # GitHub Release
+  # ============================================================
 
   release:
     name: Create GitHub Release
@@ -166,18 +244,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download binaries
-        uses: actions/download-artifact@v4
+      - name: Download all binaries
+        uses: actions/download-artifact@v5
         with:
           path: release
           merge-multiple: true
 
-      - name: List release files
+      - name: Verify release files
+        shell: bash
         run: |
           echo "Release files:"
+          echo
+
           ls -lah release
 
-      - name: Create Release
+          echo
+          echo "Number of release files:"
+          find release -maxdepth 1 -type f | wc -l
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
