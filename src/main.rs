@@ -4,7 +4,10 @@ mod lexer;
 mod tokens;
 mod AST;
 mod parser;
-use compiler::compile;
+mod vm;
+mod codegen;
+mod bytecode;
+use compiler::run;
 
 fn main() {
     let mut args = env::args();
@@ -12,10 +15,10 @@ fn main() {
     match args.next() {
         Some(x) => match x.as_str() {
             "khdm" => match args.next(){
-                Some(x) => compile(&x),
+                Some(x) => run(&x),
                 None => println!("listi5dam: drj khdm <milf.drj>"),
             }
-            _ if x.ends_with(".drj") => compile(&x),
+            _ if x.ends_with(".drj") => run(&x),
             _ => println!("had l2amr mm3rofch: {}", x),
         },
         None => println!("listi5dam: drj khdm <milf.drj>"),

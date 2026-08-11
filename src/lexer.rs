@@ -9,7 +9,7 @@ pub fn lexer(source: &str) -> Result<Vec<Token>, String> {
    let mut pos = 0;
 
    while pos < chars.len() {
-       println!("{}",  chars[pos]);
+//       println!("{}",  chars[pos]);
         if !(chars[pos].is_alphabetic() || chars[pos] == '_') && !tmp.is_empty() {
            tokens.push(Token {
                token_type: match tmp.as_str() {
@@ -57,7 +57,7 @@ pub fn lexer(source: &str) -> Result<Vec<Token>, String> {
        } else if chars[pos].is_whitespace() {
            pos +=1;
        } else {
-       println!("error?");
+//       println!("error?");
        return Err(format!("7arf mm3rofch: {}", chars[pos]))
        }
    }

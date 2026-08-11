@@ -1,6 +1,6 @@
 
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum TokenType {
     IDENT,
     KTEB,
