@@ -1,15 +1,19 @@
 use std::env;
-mod hello;
-use hello::itIsWorking;
+mod compiler;
+mod lexer;
+mod tokens;
+use compiler::compile;
 
 fn main() {
-    println!("wafin, al3alm!");
-    let ans: &str = "yes";
     let mut args = env::args();
     args.next().unwrap();
     match args.next() {
         Some(x) => match x.as_str() {
-            "khdm" => itIsWorking(&ans),
+            "khdm" => match args.next(){
+                Some(x) => compile(&x),
+                None => println!("listi5dam: drj khdm <milf.drj>"),
+            }
+            _ if x.ends_with(".drj") => compile(&x),
             _ => println!("had l2amr mm3rofch: {}", x),
         },
         None => println!("listi5dam: drj khdm <milf.drj>"),
