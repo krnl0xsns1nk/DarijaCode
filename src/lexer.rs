@@ -2,7 +2,7 @@
 
 use crate::tokens::{TokenType, Token};
 
-pub fn Lexer(source: &str) -> Result<Vec<Token>, String> {
+pub fn lexer(source: &str) -> Result<Vec<Token>, String> {
    let chars: Vec<char> = source.chars().collect();
    let mut tokens: Vec<Token> = Vec::new();
    let mut tmp = String::new();

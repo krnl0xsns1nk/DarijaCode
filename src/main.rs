@@ -2,6 +2,8 @@ use std::env;
 mod compiler;
 mod lexer;
 mod tokens;
+mod AST;
+mod parser;
 use compiler::compile;
 
 fn main() {
