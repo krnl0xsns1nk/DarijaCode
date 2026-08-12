@@ -19,12 +19,12 @@ jobs:
 
     strategy:
       fail-fast: false
-
       matrix:
         include:
           # ------------------------------------------------------
           # Linux x86_64
           # ------------------------------------------------------
+
           - name: linux-x86_64
             target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
@@ -33,6 +33,7 @@ jobs:
           # ------------------------------------------------------
           # Linux ARM64
           # ------------------------------------------------------
+
           - name: linux-aarch64
             target: aarch64-unknown-linux-gnu
             os: ubuntu-24.04-arm
@@ -41,6 +42,7 @@ jobs:
           # ------------------------------------------------------
           # macOS x86_64
           # ------------------------------------------------------
+
           - name: macos-x86_64
             target: x86_64-apple-darwin
             os: macos-15-intel
@@ -49,6 +51,7 @@ jobs:
           # ------------------------------------------------------
           # macOS ARM64
           # ------------------------------------------------------
+
           - name: macos-aarch64
             target: aarch64-apple-darwin
             os: macos-14
@@ -57,6 +60,7 @@ jobs:
           # ------------------------------------------------------
           # Windows x86_64
           # ------------------------------------------------------
+
           - name: windows-x86_64
             target: x86_64-pc-windows-msvc
             os: windows-latest
@@ -65,6 +69,7 @@ jobs:
           # ------------------------------------------------------
           # Windows ARM64
           # ------------------------------------------------------
+
           - name: windows-aarch64
             target: aarch64-pc-windows-msvc
             os: windows-11-arm
@@ -107,7 +112,6 @@ jobs:
           name: ${{ matrix.binary }}
           path: release/${{ matrix.binary }}
 
-
   # ============================================================
   # Android
   # ============================================================
@@ -124,6 +128,7 @@ jobs:
           # ------------------------------------------------------
           # Android ARM64
           # ------------------------------------------------------
+
           - name: android-aarch64
             target: aarch64-linux-android
             binary: drj-android-aarch64
@@ -132,6 +137,7 @@ jobs:
           # ------------------------------------------------------
           # Android ARMv7 32-bit
           # ------------------------------------------------------
+
           - name: android-armv7
             target: armv7-linux-androideabi
             binary: drj-android-armv7
@@ -146,10 +152,6 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
-      # --------------------------------------------------------
-      # Android SDK
-      # --------------------------------------------------------
-
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
 
@@ -158,16 +160,11 @@ jobs:
         run: |
           sdkmanager "platform-tools" "platforms;android-35" "ndk;27.2.12479018"
 
-      # --------------------------------------------------------
-      # Android linker
-      # --------------------------------------------------------
-
       - name: Configure Android linker
         shell: bash
         run: |
           NDK="$ANDROID_SDK_ROOT/ndk/27.2.12479018"
           TOOLCHAIN="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
-
           LINKER="$TOOLCHAIN/${{ matrix.linker }}"
 
           echo "Using Android linker:"
@@ -193,22 +190,14 @@ jobs:
               ;;
 
             *)
-              echo "Unsupported Android target:"
+              echo "ERROR: Unsupported Android target:"
               echo "${{ matrix.target }}"
               exit 1
               ;;
           esac
 
-      # --------------------------------------------------------
-      # Build
-      # --------------------------------------------------------
-
       - name: Build
         run: cargo build --release --target ${{ matrix.target }}
-
-      # --------------------------------------------------------
-      # Package
-      # --------------------------------------------------------
 
       - name: Prepare binary
         shell: bash
@@ -230,7 +219,6 @@ jobs:
           name: ${{ matrix.binary }}
           path: release/${{ matrix.binary }}
 
-
   # ============================================================
   # GitHub Release
   # ============================================================
@@ -244,6 +232,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
       - name: Download all binaries
         uses: actions/download-artifact@v5
         with:
@@ -262,10 +253,31 @@ jobs:
           echo "Number of release files:"
           find release -maxdepth 1 -type f | wc -l
 
+      - name: Prepare release description
+        shell: bash
+        run: |
+          mkdir -p .release
+
+          NOTES="releases/${GITHUB_REF_NAME}.md"
+
+          if [[ -f "$NOTES" ]]; then
+            cp "$NOTES" .release/notes.md
+          else
+            cat > .release/notes.md <<EOF
+          ## DarijaCode ${GITHUB_REF_NAME}
+
+          This release contains the DarijaCode binaries for the supported platforms.
+
+          See the documentation for installation and usage instructions.
+          EOF
+          fi
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: DarijaCode ${{ github.ref_name }}
-          generate_release_notes: true
+          name: drj ${{ github.ref_name }}
+          body_path: .release/notes.md
           files: release/*
+          draft: false
+          prerelease: false
