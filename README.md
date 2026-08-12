@@ -1,11 +1,18 @@
-<img src="./docs/logo.svg" alt="DarijaCode logo" width="180" height="180">
+<div align="center" >
 
 # 🕊️ DarijaCode
- 
+
+<img src="./docs/logo.svg" alt="DarijaCode logo" width="48" height="48">
+
 A programming language written in Moroccan Darija, built from the ground up in Rust. ( [Go to installation](#Installation) )
- 
-[Issues](https://github.com/krnl0xsns1nk/DarijaCode/issues) [Last commit](https://github.com/krnl0xsns1nk/DarijaCode/commits) [Top language](https://github.com/krnl0xsns1nk/DarijaCode) [Languages count](https://github.com/krnl0xsns1nk/DarijaCode)
+
 [![License: AGPLv3](https://img.shields.io/badge/License-AGPLv3-blue.svg)](LICENSE)
+[![Rust](https://img.shields.io/badge/Made%20with-Rust-orange.svg?logo=rust)](https://www.rust-lang.org/)
+[![Build](https://github.com/krnl0xsns1nk/DarijaCode/actions/workflows/release.yml/badge.svg)](https://github.com/krnl0xsns1nk/DarijaCode/actions/workflows/release.yml)
+[![GitHub release](https://img.shields.io/github/v/release/krnl0xsns1nk/DarijaCode)](https://github.com/krnl0xsns1nk/DarijaCode/releases)
+[![Platforms](https://img.shields.io/badge/platforms-8-blueviolet)](https://github.com/krnl0xsns1nk/DarijaCode/releases)
+
+</div>
  
  
 ## What is DarijaCode?
@@ -122,7 +129,7 @@ Prebuilt DarijaCode binaries are published with GitHub Releases for supported pl
 The easiest way to install DarijaCode is using the installer:
 
 ```
-curl -fsSL https://raw.githubusercontent.com/krnl0xsns1nk/DarijaCode/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/krnl0xsns1nk/DarijaCode/master/installer.sh | bash
 ``` 
  
 The installer detects the operating system and CPU architecture, finds the latest DarijaCode release, downloads the appropriate binary, and installs it as:
