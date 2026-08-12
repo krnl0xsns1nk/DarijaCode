@@ -170,7 +170,7 @@ To build the project from source, install a recent stable Rust toolchain and clo
 
 The resulting executable will be located under:
  `target/release/drj ` 
-Then Copy/Move the file to your PATh or bin path or keep it or whatever you want.
+Then Copy/Move the file to your PATH or bin path or keep it or whatever you want.
 
 You can also run DarijaCode directly during development:
  `cargo run -- program.drj ` 
