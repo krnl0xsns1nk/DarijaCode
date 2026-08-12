@@ -1,7 +1,5 @@
-
-
+use crate::ast::*;
 use crate::bytecode::Instruction;
-use crate::AST::*;
 
 pub fn compile(program: Program) -> Vec<Instruction> {
     let mut code: Vec<Instruction> = Vec::new();
@@ -12,5 +10,5 @@ pub fn compile(program: Program) -> Vec<Instruction> {
             }
         }
     }
-    return code;
+    code
 }

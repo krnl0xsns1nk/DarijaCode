@@ -30,9 +30,9 @@ cargo test
 -->
 
 ## Project layout (current)
+
 ```
-src/
-    main.rs
+tree src # jut run this :)
 ```
 
 

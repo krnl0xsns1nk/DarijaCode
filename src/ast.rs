@@ -1,16 +1,14 @@
-
 #[derive(Debug)]
 pub enum Expr {
-    String(String)
+    String(String),
 }
 
 #[derive(Debug)]
 pub enum Stmt {
-    Print(Expr)
+    Print(Expr),
 }
 
 #[derive(Debug)]
-pub struct Program{
-    pub stmts: Vec<Stmt>
+pub struct Program {
+    pub stmts: Vec<Stmt>,
 }
-

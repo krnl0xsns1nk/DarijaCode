@@ -1,16 +1,14 @@
-
-
 #[derive(Debug, PartialEq)]
 pub enum TokenType {
-    IDENT,
-    KTEB,
-    LPAREN,
-    STRING,
-    RPAREN
+    Ident,
+    Kteb,
+    Lparen,
+    String,
+    Rparen,
 }
 
 #[derive(Debug)]
 pub struct Token {
     pub token_type: TokenType,
-    pub value: String
+    pub value: String,
 }

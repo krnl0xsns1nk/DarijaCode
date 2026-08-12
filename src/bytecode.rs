@@ -1,8 +1,4 @@
-
-
-
-
 #[derive(Debug)]
 pub enum Instruction {
-    Print(String)
+    Print(String),
 }
