@@ -10,9 +10,9 @@ Before you start
 
 Please read:
 
-- "README.md" (./README.md) — project overview and current architecture.
-- "DEVELOPER.md" (./DEVELOPER.md) — development and build instructions.
-- "LICENSE" (./LICENSE) — GNU Affero General Public License v3.0.
+- [README.md](./README.md) — project overview and current architecture.
+- [DEVELOPER.md](./DEVELOPER.md) — development and build instructions.
+- [LICENSE](./LICENSE) — GNU Affero General Public License v3.0.
 
 Before starting significant work, check existing issues and pull requests. For larger changes, opening an issue first is a good way to discuss the idea before spending time implementing it.
 
@@ -28,11 +28,13 @@ git checkout -b feature/<short-description>
 
 For example:
 
+```
 feature/functions
 feature/bytecode-optimizer
 fix/parser-error
 fix/vm-stack
 docs/update-installation
+```
 
 Keep branch names short and descriptive.
 
@@ -47,7 +49,7 @@ You will generally need:
 - "cargo"
 - Git
 
-Install Rust from "rustup.rs" (https://rustup.rs/) if it is not already installed.
+Install Rust from [rustup.rs](https://rustup.rs/) if it is not already installed.
 
 Build the project with:
 
@@ -80,7 +82,7 @@ The goal is to build an actual language implementation.
 
 At a high level, the toolchain currently looks like:
 
-`
+```
 DarijaCode source
       │
       ▼
@@ -103,7 +105,7 @@ Custom Virtual Machine
       │
       ▼
    Program
-`
+```
 
 
 Rust is used to implement the compiler and runtime.
@@ -256,13 +258,17 @@ DarijaCode currently supports basic statements but cannot define reusable functi
 
 ## Testing
 
+```
 cargo fmt --check
 cargo test
 cargo build
+```
 
 Also tested:
 
+```
 cargo run -- examples/functions.drj
+```
 
 Keep pull requests focused. A small, understandable PR is easier to review and merge than a large collection of unrelated changes.
 
@@ -300,7 +306,7 @@ GNU Affero General Public License v3.0 (AGPL-3.0).
 
 By contributing to DarijaCode, you agree that your contribution will be distributed under the project's applicable licensing terms.
 
-Please read "LICENSE" (./LICENSE) before contributing.
+Please read [LICENSE](./LICENSE) before contributing.
 
 Do not submit code copied from another project unless its license is compatible with AGPL-3.0 and the origin and license are properly documented.
 
@@ -338,7 +344,7 @@ If you already know what you're doing, you can simply pick an area of the compil
 
 For language usage and user-facing documentation, see the DarijaCode documentation site:
 
-# Documentation: [doc repo](https://github.com/krnl0xsns1nk/DarijaCode-website)
+#### Documentation: [doc repo](https://github.com/krnl0xsns1nk/DarijaCode-website)
 
 ---
 
