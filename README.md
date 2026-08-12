@@ -76,7 +76,7 @@ DarijaCode source files use the `.drj` extension.
  
 A simplified view of the current architecture looks like this:
 
- `
+ ```
  DarijaCode source
  │
  ▼
@@ -99,7 +99,7 @@ A simplified view of the current architecture looks like this:
  │
  ▼
  Program
- ` 
+ ```
 The compiler and virtual machine are written in Rust.
  
 The compiler transforms DarijaCode source code into DarijaCode bytecode. The custom virtual machine then executes that bytecode.
