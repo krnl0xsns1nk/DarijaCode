@@ -1,1 +1,5 @@
-kteb("wafin, al3alam!")
+age: 3dd = 10
+year: 3dd = 2026; birth: 3dd = 2000
+name: nss = "foo"
+me: nss = "what";site:nss="chatgpt.com"
+kteb("hi");
