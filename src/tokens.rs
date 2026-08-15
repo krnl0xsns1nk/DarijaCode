@@ -12,12 +12,11 @@ pub enum TokenType {
     Equal,
     Power,
     EqualEqual,
-    SingleQ,
-    BackQ,
-    DoubleQ,
     Minus,
     Bang,
     BangEqual,
+    LessE,
+    GtrE,
     At,
     Dollar,
     Lparen,
@@ -39,29 +38,27 @@ pub enum TokenType {
     Point,
     PlusPlus,
     MinusMinus,
-    Underscore,
     Greater,
     Less,
     Star,
-    DoubleStar,
     QRbrack,
     QLbrack,
 
     // types :)
     Nss,
     Edd,
-    Tona2i,
-    Likan,
+    Exr,
+    Mnt(bool),
 
     // types in keywrod :)
     NssType,
     EddType,
-    Tona2iType,
-    LikanType,
+    ExrType,
+    MntType,
 
     // boolean (they should de sa7i7 and ghalat but anyway, i like those more
-    Ah,
-    La,
+    //Ah,
+    //La,
 
     // built in functions
     Kteb,

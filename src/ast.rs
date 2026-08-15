@@ -2,7 +2,9 @@
 pub enum Expr {
     String(String),
     Number(i64),
+    Float(f64),
     Ident(String),
+    Mnt(bool)
 }
 
 #[derive(Debug)]
@@ -25,8 +27,8 @@ pub enum Stmt {
 pub enum Type {
     Nss,
     Edd,
-    Tona2i,
-    Likan
+    Exr,
+    Mnt
 
 }
 

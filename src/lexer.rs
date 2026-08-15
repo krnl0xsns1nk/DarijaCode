@@ -38,6 +38,9 @@ impl Lexer {
         self.advance();
         let mut value = String::new();
         while self.pos < self.chars.len() && self.current() != parent {
+            if self.current() == '\n' && parent == '"' {
+                return Err("chi nass badi b '\"' maymknch irja3 lstr, sdo awla bda nass dyalk b ', awla `".to_string());
+            }
             value.push(self.current());
             self.advance();
         }
@@ -69,15 +72,46 @@ impl Lexer {
                 "kteb" => TokenType::Kteb,
                 "nss" => TokenType::NssType,
                 "3dd" => TokenType::EddType,
-                "tona2i" => TokenType::Tona2iType,
-                "likan" => TokenType::LikanType,
-                "ah" => TokenType::Ah,
-                "la" => TokenType::La,
+                "3xr" => TokenType::ExrType,
+                "mnt" => TokenType::MntType,
+                "ah" => TokenType::Mnt(true),
+                "la" => TokenType::Mnt(false),
                 _ => TokenType::Ident,
             },
             value: value
         });
         }
+    }
+    fn read_float(&mut self) -> Result<(), String>{
+        self.advance();
+        let mut value = String::new();
+        if self.current() == '-' || self.current() == '+' {
+            value.push(self.current());
+            self.advance();
+        }
+        if self.current().is_ascii_digit() {
+            value.push(self.current());
+            self.advance();
+            let mut has_one_dot = false;
+            while self.current().is_ascii_digit() ||  self.current() == '.' {
+                if self.current() == '.' {
+                    if has_one_dot {
+                        break;
+                    }
+                    has_one_dot = true;
+                    value.push(self.current());
+                } else {
+                    value.push(self.current());
+                }
+                self.advance();
+
+            }
+        } else {
+            return Err(format!("hada machi ra9m m9ad: '{}', khask tdir ~<3dd>.<3dd>", self.current()));
+        }
+        self.push(TokenType::Exr, value.clone());
+        value.clear();
+        Ok(())
     }
     fn check_double(&mut self, type1: TokenType, type2: TokenType) {
         let c = self.current().clone();
@@ -86,6 +120,27 @@ impl Lexer {
             let mut  s = String::new();
             s.push(c);
             s.push(c2);
+            self.tokens.push(Token {
+                token_type: type2,
+                value: s,
+            });
+            self.advance();
+            self.advance();
+        } else {
+            self.tokens.push(Token {
+                token_type: type1,
+                value: c.to_string(),
+            });
+            self.advance();
+        }
+    }
+    fn check_next(&mut self, type1: TokenType, cn: char, type2: TokenType) {
+        let c = self.current().clone();
+        let c2 = self.chars[self.pos + 1].clone();
+        if c2 == cn {
+            let mut s = String::new();
+            s.push(c);
+            s.push(cn);
             self.tokens.push(Token {
                 token_type: type2,
                 value: s,
@@ -120,10 +175,6 @@ impl Lexer {
                 self.push(TokenType::Hash, self.current().to_string());
                 self.advance()
             }
-            '!' => {
-                self.push(TokenType::Bang, self.current().to_string());
-                self.advance()
-            }
             '^' => {
                 self.push(TokenType::Xor, self.current().to_string());
                 self.advance()
@@ -141,7 +192,7 @@ impl Lexer {
                 self.advance()
             }
             ']' => {
-                self.push(TokenType::Rparen, self.current().to_string());
+                self.push(TokenType::Rbrack, self.current().to_string());
                 self.advance()
             }
             '{' => {
@@ -176,14 +227,6 @@ impl Lexer {
                 self.push(TokenType::Eos, self.current().to_string());
                 self.advance()
             }
-            '>' => {
-                self.push(TokenType::Greater, self.current().to_string());
-                self.advance()
-            }
-            '<' => {
-                self.push(TokenType::Less, self.current().to_string());
-                self.advance()
-            }
             '"' | '\'' | '`' => {
                 self.read_string()?;
             }
@@ -194,7 +237,7 @@ impl Lexer {
                 self.check_double(TokenType::Plus, TokenType::PlusPlus);
             }
             '-' => {
-                self.check_double(TokenType::Minus, TokenType::Minus);
+                self.check_double(TokenType::Minus, TokenType::MinusMinus);
             }
             '?' => {
                 self.check_double(TokenType::What, TokenType::WhatWhat);
@@ -214,6 +257,18 @@ impl Lexer {
             }
             '0'..='9' | 'a'..='z' | 'A'..='Z' | '_' => {
                 self.ident_or_maybe_number();
+            }
+            '~' => {
+                self.read_float()?;
+            }
+            '!' => {
+                self.check_next(TokenType::Bang, '=',  TokenType::BangEqual);
+            }
+            '<' => {
+                self.check_next(TokenType::Greater, '=',  TokenType::GtrE);
+            }
+            '>' => {
+                self.check_next(TokenType::Less, '=',  TokenType::LessE);
             }
             _ => {
                 return Err(format!("had ramz mm3rofch 3ndna: '{}'", self.current()));

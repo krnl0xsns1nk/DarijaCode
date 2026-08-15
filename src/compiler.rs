@@ -4,7 +4,7 @@ use crate::codegen::compile;
 use crate::lexer::Lexer;
 use crate::parser::Parser;
 use crate::tokens::Token;
-use crate::vm::the_vm;
+use crate::vm::VM;
 use std::fs::read_to_string;
 
 pub fn run(filename: &str) {
@@ -25,8 +25,8 @@ pub fn run(filename: &str) {
         }
     };
     println!("{:#?}", tokens);
-    
-    let mut parser: Parser = Parser::new(&tokens);
+
+    let parser: Parser = Parser::new(&tokens);
     let ast: Program = match parser.run() {
         Ok(ast) => ast,
         Err(error) => {
@@ -35,8 +35,9 @@ pub fn run(filename: &str) {
         }
     };
     println!("{:#?}", ast);
-    /*
-    let codegen: Vec<Instruction> = compile(ast);
-    //    println!("{:#?}", codegen);
-    the_vm(&codegen);*/
+
+   let codegen: Vec<Instruction> = compile(ast);
+    println!("{:#?}", codegen);
+    let mut vm : VM = VM::new(&codegen);
+    vm.run();
 }

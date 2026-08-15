@@ -46,14 +46,16 @@ impl<'a> Parser<'a> {
         match token.token_type {
             TokenType::EddType => Ok(Type::Edd),
             TokenType::NssType => Ok(Type::Nss),
+            TokenType::ExrType => Ok(Type::Exr),
+            TokenType::MntType => Ok(Type::Mnt),
 //            TokenType::Ident => Ok(self.current(0).value),  //custom typrs in the futur
-            _ => Err(format!("hada machi naw3 m9ad: '{}', stkhdm chi naw3 mojod bhal: (nss, 3dd, tona2i, etc...)", self.current(0).value))
+            _ => Err(format!("hada machi naw3 m9ad: '{}', stkhdm chi naw3 mojod bhal: (nss, 3dd, 3xr, etc...)", self.current(0).value))
         }
     }
     fn expect_expr(&mut self) -> Result<Expr, String> {
         let mut tokens: Vec<Token> = Vec::new();
         let first = self.current(0).clone();
-        while self.current(0).token_type != TokenType::NewLine && self.current(0).token_type != TokenType::Eos {
+        while self.current(0).token_type != TokenType::NewLine && self.current(0).token_type != TokenType::Eos && self.current(0).token_type != TokenType::Rparen{
             tokens.push(self.current(0).clone());
             self.advance();
         }
@@ -63,16 +65,22 @@ impl<'a> Parser<'a> {
             let expr = match that_token.token_type {
                 TokenType::Nss => Expr::String(that_token.value),
                 TokenType::Edd => {
-                    let number = that_token.value.parse::<i64>().map_err(|_| format!("had l9ima machi 3dd: '{}'", that_token.value))?;
+                    let number = that_token.value.parse::<i64>().map_err(|_| format!("had l9ima machi 3dd m9ad: '{}'", that_token.value))?;
                     Expr::Number(number)
                 }
+                TokenType::Exr => {
+                    let float = that_token.value.parse::<f64>().map_err(|_| format!("had l9ima machi 3xr m9ad: '{}'", that_token.value))?;
+                    Expr::Float(float)
+                }
+                TokenType::Mnt(value) => Expr::Mnt(value),
                 TokenType::Ident => Expr::Ident(that_token.value),
                 _ => return Err(format!("had l9ima mmd3omach '{}', dir chi 9ima m9ada", that_token.value)),
             };
-            self.advance();
+//            self.advance();
             return Ok(expr);
         }
-        return Err(format!("drti bzaf dyal ta3abir, hadchi mmd3omch 7alyan"))
+        
+        return Err(format!("drti bzaf dyal ta3abir, hadchi mmd3omch 7alyan: {:#?}", tokens))
     }
     fn scan(&mut self)-> Result<(), String> {
         match  self.current(0).token_type {
@@ -80,9 +88,10 @@ impl<'a> Parser<'a> {
             TokenType::Kteb => {
                 self.advance();
                 self.expect(TokenType::Lparen)?;
-                let value = self.expect(TokenType::Nss)?;
+                        let value = self.expect_expr()?;
+//                let value = self.expect(TokenType::Nss)?;
                 self.expect(TokenType::Rparen)?;
-                self.ast.stmts.push(Stmt::Print(Expr::String(value)))
+                self.ast.stmts.push(Stmt::Print(value))
             },
             TokenType::Ident => {
                 let ident = self.current(0).value.clone();
@@ -90,7 +99,7 @@ impl<'a> Parser<'a> {
                 match self.current(0).token_type {
                     TokenType::Colon => {
                         self.advance();
-                        let type_ = self.type_expect()?;;
+                        let type_ = self.type_expect()?;
                         self.expect(TokenType::Equal)?;
                         let value = self.expect_expr()?;
                         self.ast.stmts.push(Stmt::DeclarVar{
