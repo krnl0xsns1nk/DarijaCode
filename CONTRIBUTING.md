@@ -1,8 +1,8 @@
-# Contributing to DarijaCode
+# Contributing to drj
 
-Thank you for your interest in DarijaCode.
+Thank you for your interest in drj.
 
-DarijaCode is an independent programming language written in Rust. The project is experimental, open source, and built primarily because we want to build a real programming language and see where it can go.
+drj is an independent programming language written in Rust. The project is experimental, open source, and built primarily because we want to build a real programming language and see where it can go.
 
 The project is still young, so the compiler, bytecode format, VM, standard library, tooling, and language syntax may change. Contributions are welcome, whether you're fixing a bug, improving the compiler, writing documentation, adding tests, or experimenting with the language itself.
 
@@ -21,8 +21,8 @@ Before starting significant work, check existing issues and pull requests. For l
 Fork the repository, clone your fork, and create a branch:
 
 ```
-git clone https://github.com/krnl0xsns1nk/DarijaCode.git
-cd DarijaCode
+git clone https://github.com/krnl0xsns1nk/drj.git
+cd drj
 git checkout -b feature/<short-description>
 ```
 
@@ -40,7 +40,7 @@ Keep branch names short and descriptive.
 
 # Development environment
 
-DarijaCode is written in Rust and uses Cargo.
+drj is written in Rust and uses Cargo.
 
 You will generally need:
 
@@ -58,7 +58,7 @@ cargo build
 ```
 
 
-Run DarijaCode with:
+Run drj with:
 
 ```
 cargo run -- path/to/program.drj
@@ -76,14 +76,14 @@ The exact development workflow may evolve as the compiler and VM grow, so check 
 
 Understanding the project
 
-DarijaCode is not a language implemented as a thin layer over JavaScript, Python, Node.js, or another existing programming language.
+drj is not a language implemented as a thin layer over JavaScript, Python, Node.js, or another existing programming language.
 
 The goal is to build an actual language implementation.
 
 At a high level, the toolchain currently looks like:
 
 ```
-DarijaCode source
+drj source
       │
       ▼
     Lexer
@@ -98,7 +98,7 @@ DarijaCode source
 Bytecode Compiler
       │
       ▼
-DarijaCode Bytecode
+drj Bytecode
       │
       ▼
 Custom Virtual Machine
@@ -110,9 +110,9 @@ Custom Virtual Machine
 
 Rust is used to implement the compiler and runtime.
 
-The bytecode format and VM are part of DarijaCode itself. They are implementation details that will evolve as the project develops.
+The bytecode format and VM are part of drj itself. They are implementation details that will evolve as the project develops.
 
-When contributing, keep this independence in mind. Avoid introducing dependencies on another language's runtime or compiler when the functionality belongs inside DarijaCode itself.
+When contributing, keep this independence in mind. Avoid introducing dependencies on another language's runtime or compiler when the functionality belongs inside drj itself.
 
 What can you contribute?
 
@@ -142,13 +142,13 @@ You can also propose something completely different. Open an issue and explain w
 
 ## Language and implementation changes
 
-DarijaCode is still evolving, so language design decisions should be discussed before large changes are implemented.
+drj is still evolving, so language design decisions should be discussed before large changes are implemented.
 
 For changes involving syntax, semantics, bytecode, the VM, or the standard library, explain:
 
 1. What problem the change solves.
 2. What the proposed behavior is.
-3. Why the change belongs in DarijaCode.
+3. Why the change belongs in drj.
 4. Whether it introduces breaking changes.
 5. How the behavior can be tested.
 
@@ -254,7 +254,7 @@ Added support for function declarations and calls.
 
 ## Why
 
-DarijaCode currently supports basic statements but cannot define reusable functions.
+drj currently supports basic statements but cannot define reusable functions.
 
 ## Testing
 
@@ -289,7 +289,7 @@ For bug reports, include:
 - Operating system
 - Architecture
 - Rust version
-- DarijaCode version or commit
+- drj version or commit
 - The ".drj" program that reproduces the problem
 - The command you ran
 - Expected behavior
@@ -300,11 +300,11 @@ A minimal reproducer is extremely helpful.
 
 ## License
 
-DarijaCode is free and open-source software licensed under the:
+drj is free and open-source software licensed under the:
 
 GNU Affero General Public License v3.0 (AGPL-3.0).
 
-By contributing to DarijaCode, you agree that your contribution will be distributed under the project's applicable licensing terms.
+By contributing to drj, you agree that your contribution will be distributed under the project's applicable licensing terms.
 
 Please read [LICENSE](./LICENSE) before contributing.
 
@@ -320,7 +320,7 @@ Harassment, discrimination, personal attacks, and abusive behavior are not accep
 
 The project is experimental
 
-DarijaCode is intentionally experimental.
+drj is intentionally experimental.
 
 The syntax may change.
 
@@ -342,12 +342,12 @@ If you want to work on something but are not sure where to start, open an issue 
 
 If you already know what you're doing, you can simply pick an area of the compiler, VM, tooling, documentation, or language and start exploring the code.
 
-For language usage and user-facing documentation, see the DarijaCode documentation site:
+For language usage and user-facing documentation, see the drj documentation site:
 
-#### Documentation: [doc repo](https://github.com/krnl0xsns1nk/DarijaCode-website)
+#### Documentation: [doc repo](https://github.com/krnl0xsns1nk/drj-website)
 
 ---
 
-DarijaCode is being built for the fun of building a real programming language.
+drj is being built for the fun of building a real programming language.
 
 If you want to help make it better, you're welcome here.

@@ -1,23 +1,25 @@
 <div align="center" >
 
-# 🕊️ DarijaCode
+# 🕊️drj: Dir Runtime Jdid  
 
-<img src="./docs/logo.svg" alt="DarijaCode logo" width="48" height="48">
+> translataion : drj: Make a New Runtime
+
+<img src="./docs/logo.svg" alt="drj logo" width="48" height="48">
 
 A programming language written in Moroccan Darija, built from the ground up in Rust. ( [Go to installation](#Installation) )
 
 [![License: AGPLv3](https://img.shields.io/badge/License-AGPLv3-blue.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/Made%20with-Rust-orange.svg?logo=rust)](https://www.rust-lang.org/)
-[![Build](https://github.com/krnl0xsns1nk/DarijaCode/actions/workflows/release.yml/badge.svg)](https://github.com/krnl0xsns1nk/DarijaCode/actions/workflows/release.yml)
-[![GitHub release](https://img.shields.io/github/v/release/krnl0xsns1nk/DarijaCode)](https://github.com/krnl0xsns1nk/DarijaCode/releases)
-[![Platforms](https://img.shields.io/badge/platforms-8-blueviolet)](https://github.com/krnl0xsns1nk/DarijaCode/releases)
+[![Build](https://github.com/krnl0xsns1nk/drj/actions/workflows/release.yml/badge.svg)](https://github.com/krnl0xsns1nk/drj/actions/workflows/release.yml)
+[![GitHub release](https://img.shields.io/github/v/release/krnl0xsns1nk/drj)](https://github.com/krnl0xsns1nk/drj/releases)
+[![Platforms](https://img.shields.io/badge/platforms-8-blueviolet)](https://github.com/krnl0xsns1nk/drj/releases)
 
 </div>
  
  
-## What is DarijaCode?
+## What is drj?
  
-DarijaCode is an independent programming language built around Moroccan Darija.
+drj is an independent programming language built around Moroccan Darija.
  
 It is not a JavaScript library, a Python wrapper, a Node.js runtime, or a layer on top of another programming language.
  
@@ -25,19 +27,19 @@ The goal is simple:
  
 **Build an actual programming language.**
  
-DarijaCode has its own syntax, lexer, parser, compiler, bytecode format, and virtual machine. The project is written in Rust and is designed to eventually become a complete language and ecosystem of its own.
+drj has its own syntax, lexer, parser, compiler, bytecode format, and virtual machine. The project is written in Rust and is designed to eventually become a complete language and ecosystem of its own.
  
 And yes — it is being built for fun.
  
 But "for fun" does not mean "fake."
  
-The long-term goal is for people to actually use DarijaCode to build things.
+The long-term goal is for people to actually use drj to build things.
  
 ## Philosophy
  
-DarijaCode exists because building a programming language is interesting.
+drj exists because building a programming language is interesting.
  
-Instead of building another language that ultimately translates everything into JavaScript, Python, C, or another existing runtime, DarijaCode is being developed as an independent language.
+Instead of building another language that ultimately translates everything into JavaScript, Python, C, or another existing runtime, drj is being developed as an independent language.
  
 We want to understand what happens when we build the pieces ourselves:
  
@@ -60,24 +62,24 @@ We want to understand what happens when we build the pieces ourselves:
  
 
  
-There is no promise that DarijaCode will become the next huge programming language.
+There is no promise that drj will become the next huge programming language.
  
 There does not need to be one.
  
 It is an experiment, a serious software project, and an excuse to build something from the ground up.
  
-If you know how to program and want to use DarijaCode to build something, **please do.**
+If you know how to program and want to use drj to build something, **please do.**
  
 That is one of the things this project hopes for.
  
 ## How it works
  
-DarijaCode source files use the `.drj` extension.
+drj source files use the `.drj` extension.
  
 A simplified view of the current architecture looks like this:
 
  ```
- DarijaCode source
+ drj source
  │
  ▼
  Lexer
@@ -92,25 +94,25 @@ A simplified view of the current architecture looks like this:
  Bytecode Compiler
  │
  ▼
- DarijaCode Bytecode
+ drj Bytecode
  │
  ▼
- DarijaCode VM
+ drj VM
  │
  ▼
  Program
  ```
 The compiler and virtual machine are written in Rust.
  
-The compiler transforms DarijaCode source code into DarijaCode bytecode. The custom virtual machine then executes that bytecode.
+The compiler transforms drj source code into drj bytecode. The custom virtual machine then executes that bytecode.
  
-This means DarijaCode does not need Node.js, Python, or another programming language's runtime to execute a DarijaCode program.
+This means drj does not need Node.js, Python, or another programming language's runtime to execute a drj program.
  
 The bytecode format and VM are internal implementation details for now and may change as the language evolves.
  
 ## Example
  
-A minimal DarijaCode program:
+A minimal drj program:
  `kteb("wafin, al3alam!") ` 
 Running it:
  `drj hello.drj ` 
@@ -122,17 +124,17 @@ Expect things to change.
  
 # Installation
  
-Prebuilt DarijaCode binaries are published with GitHub Releases for supported platforms.
+Prebuilt drj binaries are published with GitHub Releases for supported platforms.
  
 ### Linux, macOS, and Android / Termux
  
-The easiest way to install DarijaCode is using the installer:
+The easiest way to install drj is using the installer:
 
 ```
-curl -fsSL https://raw.githubusercontent.com/krnl0xsns1nk/DarijaCode/master/installer.sh | bash
+curl -fsSL https://raw.githubusercontent.com/krnl0xsns1nk/drj/master/installer.sh | bash
 ``` 
  
-The installer detects the operating system and CPU architecture, finds the latest DarijaCode release, downloads the appropriate binary, and installs it as:
+The installer detects the operating system and CPU architecture, finds the latest drj release, downloads the appropriate binary, and installs it as:
  `~/.local/bin/drj ` 
 After installation:
  `drj program.drj ` 
@@ -158,13 +160,13 @@ The release system currently provides builds for multiple Linux, macOS, Windows,
  
 ## Building from source
  
-DarijaCode is written in Rust.
+drj is written in Rust.
  
 To build the project from source, install a recent stable Rust toolchain and clone the repository:
  
  ```bash
- git clone https://github.com/krnl0xsns1nk/DarijaCode.git
- cd DarijaCode
+ git clone https://github.com/krnl0xsns1nk/drj.git
+ cd drj
  cargo build --release  # Build it with Cargo:
  ```
 
@@ -172,7 +174,7 @@ The resulting executable will be located under:
  `target/release/drj ` 
 Then Copy/Move the file to your PATH or bin path or keep it or whatever you want.
 
-You can also run DarijaCode directly during development:
+You can also run drj directly during development:
  `cargo run -- program.drj ` 
 For more information about working on the compiler itself, see:
  
@@ -187,7 +189,7 @@ For more information about working on the compiler itself, see:
  
 The main documentation site is being developed separately.
  
-**Documentation site:** `https://github.com/krnl0xsns1nk/DarijaCode-website`
+**Documentation site:** `https://github.com/krnl0xsns1nk/drj-website`
  
  
 Documentation site coming soon.
@@ -199,15 +201,15 @@ If you're completely new to programming, the repository probably isn't the best 
  
 That's okay.
  
-DarijaCode is not trying to replace programming education. It is trying to be a programming language.
+drj is not trying to replace programming education. It is trying to be a programming language.
  
 ## Open source
  
-DarijaCode is open source.
+drj is open source.
  
 You can read the source code, modify it, fork it, experiment with it, and build projects with it according to the terms of the project's AGPL license.
  
-If you want to build something with DarijaCode, go ahead.
+If you want to build something with drj, go ahead.
  
 If you want to experiment with the compiler, go ahead.
  
@@ -234,7 +236,7 @@ For larger changes, opening an issue first is usually a good idea so the directi
  
 ## Development status
  
-DarijaCode is **experimental and under active development**.
+drj is **experimental and under active development**.
  
 The language is not feature-complete and compatibility between versions is not guaranteed yet.
  
@@ -244,24 +246,24 @@ Current releases should be considered early development releases.
  
 ## License
  
-DarijaCode is free and open-source software licensed under the **GNU Affero General Public License (AGPL)**.
+drj is free and open-source software licensed under the **GNU Affero General Public License (AGPL)**.
  
 See `LICENSE` for the complete license text.
  
 ## Links
  
  
-- [GitHub repository](https://github.com/krnl0xsns1nk/DarijaCode)
+- [GitHub repository](https://github.com/krnl0xsns1nk/drj)
  
-- [Releases](https://github.com/krnl0xsns1nk/DarijaCode/releases)
+- [Releases](https://github.com/krnl0xsns1nk/drj/releases)
  
-- [Issues](https://github.com/krnl0xsns1nk/DarijaCode/issues)
+- [Issues](https://github.com/krnl0xsns1nk/drj/issues)
  
 - [Contributing](./CONTRIBUTING.md)
  
 - [Developer guide](./DEVELOPPER.md)
  
-- [Documentation site repository](https://github.com/krnl0xsns1nk/DarijaCode-website)
+- [Documentation site repository](https://github.com/krnl0xsns1nk/drj-website)
  
 
  

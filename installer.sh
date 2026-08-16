@@ -2,7 +2,7 @@
 
 set -e
 
-REPO="krnl0xsns1nk/DarijaCode"
+REPO="krnl0xsns1nk/drj"
 
 OS="$(uname -s)"
 ARCH="$(uname -m)"

@@ -1,6 +1,6 @@
 # Developer Notes
 
-Quick notes for building and running DarijaCode locally. This will grow as the project does.
+Quick notes for building and running `drj` locally. This will grow as the project does.
 
 ## Requirements
 - Rust (stable) — install via [rustup.rs](https://rustup.rs/)

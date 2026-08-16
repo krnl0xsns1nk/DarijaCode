@@ -156,3 +156,8 @@ tests/generated
 # Added by me
 
 d.drj
+
+# again, added by me, we are not really yet for the nvim pulgin
+
+editor/
+/editor
