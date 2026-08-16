@@ -4,7 +4,22 @@ pub enum Expr {
     Number(i64),
     Float(f64),
     Ident(String),
-    Mnt(bool)
+    Mnt(bool),
+/*
+    Binary {
+        left: Box<Expr>,
+        op: BinaryOp,
+        right: Box<Expr>,
+    }
+
+}
+
+#[derive(Debug)]
+pub enum BinaryOp {
+    Add,
+    Mul,
+    Sub,
+    Div*/
 }
 
 #[derive(Debug)]
@@ -14,13 +29,13 @@ pub enum Stmt {
     DeclarVar {
         name: String,
         type_: Type,
-        value: Expr
+        value: Expr,
     },
 
     Assign {
         name: String,
-        value: Expr
-    }
+        value: Expr,
+    },
 }
 
 #[derive(Debug)]
@@ -28,8 +43,7 @@ pub enum Type {
     Nss,
     Edd,
     Exr,
-    Mnt
-
+    Mnt,
 }
 
 #[derive(Debug)]

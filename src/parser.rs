@@ -1,10 +1,11 @@
 use crate::ast::*;
-use crate::tokens::{Token, TokenType};
+use crate::errors::*;
+use crate::tokens::*;
 
 pub struct Parser<'a> {
     tokens: &'a [Token],
     pos: usize,
-    ast: Program
+    ast: Program,
 }
 
 impl<'a> Parser<'a> {
@@ -12,12 +13,10 @@ impl<'a> Parser<'a> {
         Self {
             tokens: tokens,
             pos: 0,
-            ast: Program {
-                stmts: Vec::new()
-            }
+            ast: Program { stmts: Vec::new() },
         }
     }
-    pub fn run(mut self) -> Result<Program, String> {
+    pub fn run(mut self) -> Result<Program, CompilerError> {
         while self.pos < self.tokens.len() {
             self.scan()?;
         }
@@ -26,21 +25,26 @@ impl<'a> Parser<'a> {
     fn current(&self, offest: usize) -> &Token {
         &self.tokens[self.pos + offest]
     }
-    fn advance(&mut self){
-        self.pos +=1;
+    fn advance(&mut self) {
+        self.pos += 1;
     }
-    fn expect(&mut self, expected: TokenType) -> Result<String, String> {
-    if self.current(0).token_type != expected {
-        return Err(format!(
-            "kna kantsnaw mnk {:?}, wlkin l9inak dayr {:?}",
-            expected, self.current(0).token_type
-        ));
+    fn err(&mut self, er: Er) -> CompilerError {
+        let e = CompilerError {
+            er,
+            span: self.current(0).span.clone(),
+            info: None
+        };
+        return e;
     }
-    let value = self.current(0).value.clone();
-    self.advance();
-    Ok(value)
+    fn expect(&mut self, expected: TokenType) -> Result<String, CompilerError> {
+        if self.current(0).token_type != expected {
+            return Err(self.err(Er::UnExpectedToken));
+        }
+        let value = self.current(0).value.clone();
+        self.advance();
+        Ok(value)
     }
-    fn type_expect(&mut self) -> Result<Type, String> {
+    fn type_expect(&mut self) -> Result<Type, CompilerError> {
         let token = self.current(0).clone();
         self.advance();
         match token.token_type {
@@ -48,51 +52,62 @@ impl<'a> Parser<'a> {
             TokenType::NssType => Ok(Type::Nss),
             TokenType::ExrType => Ok(Type::Exr),
             TokenType::MntType => Ok(Type::Mnt),
-//            TokenType::Ident => Ok(self.current(0).value),  //custom typrs in the futur
-            _ => Err(format!("hada machi naw3 m9ad: '{}', stkhdm chi naw3 mojod bhal: (nss, 3dd, 3xr, etc...)", self.current(0).value))
+            //            TokenType::Ident => Ok(self.current(0).value),  //custom typrs in the futur
+            _ => return Err(self.err(Er::UnknownType)),
         }
     }
-    fn expect_expr(&mut self) -> Result<Expr, String> {
+    fn expect_expr(&mut self) -> Result<Expr, CompilerError> {
         let mut tokens: Vec<Token> = Vec::new();
         let first = self.current(0).clone();
-        while self.current(0).token_type != TokenType::NewLine && self.current(0).token_type != TokenType::Eos && self.current(0).token_type != TokenType::Rparen{
+        while self.current(0).token_type != TokenType::NewLine
+            && self.current(0).token_type != TokenType::Eos
+            && self.current(0).token_type != TokenType::Rparen
+        {
             tokens.push(self.current(0).clone());
             self.advance();
         }
-        if tokens.len() < 1 { return Err(format!("khask chi ta3bir mora: '{}'", first.value)); }
+        if tokens.len() < 1 {
+            return Err(self.err(Er::NeedExpr));
+        }
         if tokens.len() == 1 {
             let that_token = tokens[0].clone();
             let expr = match that_token.token_type {
                 TokenType::Nss => Expr::String(that_token.value),
                 TokenType::Edd => {
-                    let number = that_token.value.parse::<i64>().map_err(|_| format!("had l9ima machi 3dd m9ad: '{}'", that_token.value))?;
+                    let number = that_token
+                        .value
+                        .parse::<i64>()
+                        .map_err(|_| self.err(Er::InvalidNumber))?;
                     Expr::Number(number)
                 }
                 TokenType::Exr => {
-                    let float = that_token.value.parse::<f64>().map_err(|_| format!("had l9ima machi 3xr m9ad: '{}'", that_token.value))?;
+                    let float = that_token
+                        .value
+                        .parse::<f64>()
+                        .map_err(|_| self.err(Er::InvalidFloat))?;
                     Expr::Float(float)
                 }
                 TokenType::Mnt(value) => Expr::Mnt(value),
                 TokenType::Ident => Expr::Ident(that_token.value),
-                _ => return Err(format!("had l9ima mmd3omach '{}', dir chi 9ima m9ada", that_token.value)),
+                _ => return Err(self.err(Er::InvalidValue)),
             };
-//            self.advance();
+            //            self.advance();
             return Ok(expr);
         }
-        
-        return Err(format!("drti bzaf dyal ta3abir, hadchi mmd3omch 7alyan: {:#?}", tokens))
+
+        return Err(self.err(Er::ALotOfExpr));
     }
-    fn scan(&mut self)-> Result<(), String> {
-        match  self.current(0).token_type {
+    fn scan(&mut self) -> Result<(), CompilerError> {
+        match self.current(0).token_type {
             TokenType::NewLine | TokenType::Eos => self.advance(),
             TokenType::Kteb => {
                 self.advance();
                 self.expect(TokenType::Lparen)?;
-                        let value = self.expect_expr()?;
-//                let value = self.expect(TokenType::Nss)?;
+                let value = self.expect_expr()?;
+                //                let value = self.expect(TokenType::Nss)?;
                 self.expect(TokenType::Rparen)?;
                 self.ast.stmts.push(Stmt::Print(value))
-            },
+            }
             TokenType::Ident => {
                 let ident = self.current(0).value.clone();
                 self.advance();
@@ -102,28 +117,25 @@ impl<'a> Parser<'a> {
                         let type_ = self.type_expect()?;
                         self.expect(TokenType::Equal)?;
                         let value = self.expect_expr()?;
-                        self.ast.stmts.push(Stmt::DeclarVar{
+                        self.ast.stmts.push(Stmt::DeclarVar {
                             name: ident.to_string(),
-                            type_: type_,
-                            value: value,
+                            type_,
+                            value,
                         });
                     }
                     TokenType::Equal => {
                         self.advance();
                         let value = self.expect_expr()?;
-                        self.ast.stmts.push(Stmt::Assign{
+                        self.ast.stmts.push(Stmt::Assign {
                             name: ident,
-                            value: value
+                            value,
                         });
                     }
-                    _ => todo!(),
+                    _ => return Err(self.err(Er::NeedExpr).info("tw93na chi w7da mn hado: ':' awla '='")),
                 }
             }
-            _ => {
-                return Err("had nwa3 mm3rofch".to_string());
-            }
+            _ => return Err(self.err(Er::NeedStmt)),
         }
         Ok(())
     }
-
 }

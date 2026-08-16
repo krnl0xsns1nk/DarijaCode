@@ -1,9 +1,12 @@
-use crate::tokens::{Token, TokenType};
+use crate::errors::*;
+use crate::tokens::*;
 
 pub struct Lexer {
     chars: Vec<char>,
     tokens: Vec<Token>,
     pos: usize,
+    start: usize,
+//    end: usize,
 }
 
 impl Lexer {
@@ -12,10 +15,12 @@ impl Lexer {
             chars: source.chars().collect(),
             tokens: Vec::new(),
             pos: 0,
+            start: 0,
+//            end: 0,
         }
     }
 
-    pub fn run(&mut self) -> Result<Vec<Token>, String> {
+    pub fn run(&mut self) -> Result<Vec<Token>, CompilerError> {
         while self.pos < self.chars.len() {
             self.scan()?;
         }
@@ -31,21 +36,36 @@ impl Lexer {
         self.tokens.push(Token {
             token_type: its_type,
             value: its_value,
+            span: Span {
+                start: self.start,
+                end: self.pos,
+            },
         });
     }
-    fn read_string(&mut self) -> Result<(), String> {
+    fn err(&mut self, e: Er) -> CompilerError {
+        let err = CompilerError {
+            er: e,
+            span: Span {
+                start: self.start,
+                end: self.pos,
+            },
+            info: None
+        };
+        return err;
+    }
+    fn read_string(&mut self) -> Result<(), CompilerError> {
         let parent = self.current();
         self.advance();
         let mut value = String::new();
         while self.pos < self.chars.len() && self.current() != parent {
             if self.current() == '\n' && parent == '"' {
-                return Err("chi nass badi b '\"' maymknch irja3 lstr, sdo awla bda nass dyalk b ', awla `".to_string());
+                return Err(self.err(Er::UnCompletString));
             }
             value.push(self.current());
             self.advance();
         }
         if self.pos >= self.chars.len() && self.chars[self.pos - 1] != parent {
-            return Err("nass khaso isali bwah7da mmn hado  \", \', ` (bdakchi li bditi bih nass) 9bal maysali lmifl".to_string());
+            return Err(self.err(Er::NewLineString));
         }
         self.push(TokenType::Nss, value.clone());
         value.clear();
@@ -62,27 +82,32 @@ impl Lexer {
             self.advance();
         }
 
-        let is_number = first.is_ascii_digit() && value.chars().all(|c| c.is_ascii_digit() || c == '_');
+        let is_number =
+            first.is_ascii_digit() && value.chars().all(|c| c.is_ascii_digit() || c == '_');
         if is_number && value.chars().any(|c| c.is_ascii_digit()) {
             value = value.replace('_', "");
             self.push(TokenType::Edd, value);
         } else {
             self.tokens.push(Token {
-            token_type: match value.as_str() {
-                "kteb" => TokenType::Kteb,
-                "nss" => TokenType::NssType,
-                "3dd" => TokenType::EddType,
-                "3xr" => TokenType::ExrType,
-                "mnt" => TokenType::MntType,
-                "ah" => TokenType::Mnt(true),
-                "la" => TokenType::Mnt(false),
-                _ => TokenType::Ident,
-            },
-            value: value
-        });
+                token_type: match value.as_str() {
+                    "kteb" => TokenType::Kteb,
+                    "nss" => TokenType::NssType,
+                    "3dd" => TokenType::EddType,
+                    "3xr" => TokenType::ExrType,
+                    "mnt" => TokenType::MntType,
+                    "ah" => TokenType::Mnt(true),
+                    "la" => TokenType::Mnt(false),
+                    _ => TokenType::Ident,
+                },
+                value: value,
+                span: Span {
+                    start: self.start,
+                    end: self.pos,
+                },
+            });
         }
     }
-    fn read_float(&mut self) -> Result<(), String>{
+    fn read_float(&mut self) -> Result<(), CompilerError> {
         self.advance();
         let mut value = String::new();
         if self.current() == '-' || self.current() == '+' {
@@ -93,7 +118,7 @@ impl Lexer {
             value.push(self.current());
             self.advance();
             let mut has_one_dot = false;
-            while self.current().is_ascii_digit() ||  self.current() == '.' {
+            while self.current().is_ascii_digit() || self.current() == '.' {
                 if self.current() == '.' {
                     if has_one_dot {
                         break;
@@ -104,10 +129,9 @@ impl Lexer {
                     value.push(self.current());
                 }
                 self.advance();
-
             }
         } else {
-            return Err(format!("hada machi ra9m m9ad: '{}', khask tdir ~<3dd>.<3dd>", self.current()));
+            return Err(self.err(Er::InvalidFloat));
         }
         self.push(TokenType::Exr, value.clone());
         value.clear();
@@ -117,12 +141,16 @@ impl Lexer {
         let c = self.current().clone();
         let c2 = self.chars[self.pos + 1].clone();
         if c2 == c {
-            let mut  s = String::new();
+            let mut s = String::new();
             s.push(c);
             s.push(c2);
             self.tokens.push(Token {
                 token_type: type2,
                 value: s,
+                span: Span {
+                    start: self.start,
+                    end: self.pos,
+                },
             });
             self.advance();
             self.advance();
@@ -130,6 +158,10 @@ impl Lexer {
             self.tokens.push(Token {
                 token_type: type1,
                 value: c.to_string(),
+                span: Span {
+                    start: self.start,
+                    end: self.pos,
+                },
             });
             self.advance();
         }
@@ -144,6 +176,10 @@ impl Lexer {
             self.tokens.push(Token {
                 token_type: type2,
                 value: s,
+                span: Span {
+                    start: self.start,
+                    end: self.pos,
+                },
             });
             self.advance();
             self.advance();
@@ -151,16 +187,21 @@ impl Lexer {
             self.tokens.push(Token {
                 token_type: type1,
                 value: c.to_string(),
+                span: Span {
+                    start: self.start,
+                    end: self.pos,
+                },
             });
             self.advance();
         }
     }
-    fn scan(&mut self) -> Result<(), String> {
+    fn scan(&mut self) -> Result<(), CompilerError> {
         //println!("{}", self.chars[self.pos]);
+        self.start = self.pos;
         match self.current() {
             ' ' | '\r' | '\t' => self.advance(),
             '\n' => {
-                self.push(TokenType::NewLine, "newline".to_string());
+                self.push(TokenType::NewLine, "str jdid".to_string());
                 self.advance()
             }
             '@' => {
@@ -262,16 +303,16 @@ impl Lexer {
                 self.read_float()?;
             }
             '!' => {
-                self.check_next(TokenType::Bang, '=',  TokenType::BangEqual);
+                self.check_next(TokenType::Bang, '=', TokenType::BangEqual);
             }
             '<' => {
-                self.check_next(TokenType::Greater, '=',  TokenType::GtrE);
+                self.check_next(TokenType::Greater, '=', TokenType::GtrE);
             }
             '>' => {
-                self.check_next(TokenType::Less, '=',  TokenType::LessE);
+                self.check_next(TokenType::Less, '=', TokenType::LessE);
             }
             _ => {
-                return Err(format!("had ramz mm3rofch 3ndna: '{}'", self.current()));
+                return Err(self.err(Er::UnknownSymbol));
             }
         }
         Ok(())

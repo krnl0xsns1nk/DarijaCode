@@ -65,7 +65,14 @@ pub enum TokenType {
 }
 
 #[derive(Debug, Clone)]
+pub struct Span {
+    pub start: usize,
+    pub end: usize,
+}
+
+#[derive(Debug, Clone)]
 pub struct Token {
     pub token_type: TokenType,
     pub value: String,
+    pub span: Span,
 }

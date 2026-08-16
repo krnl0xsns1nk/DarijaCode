@@ -1,6 +1,5 @@
 #[derive(Debug)]
 pub enum Instruction {
-    
     // print
     Print,
 
@@ -9,9 +8,8 @@ pub enum Instruction {
     PushInt(i64),
     PushFloat(f64),
     PushBool(bool),
-    
-    // store && Load  
-    Store(String),
-    Load(String)
 
+    // store && Load
+    Store(String),
+    Load(String),
 }

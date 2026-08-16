@@ -3,13 +3,23 @@ mod ast;
 mod bytecode;
 mod codegen;
 mod compiler;
+mod errors;
 mod lexer;
 mod parser;
 mod tokens;
 mod vm;
 use compiler::run;
 
+#[cfg(not(debug_assertions))]
+fn hide_panics() {
+    std::panic::set_hook(Box::new(|_| {
+        eprintln!("drj: w9a3 wahd lmochkil da5ily;\n\"please\" 7l issue m3a lcode dyalk f github.com/krnl0xsns1nk/drj bach t3lmna onsl7o lmochkil.");
+    }));
+}
+
 fn main() {
+    #[cfg(not(debug_assertions))]
+    hide_panics();
     let mut args = env::args();
     args.next().unwrap();
     match args.next() {
