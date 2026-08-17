@@ -155,7 +155,9 @@ tests/generated
 
 # Added by me
 
+./d.drj
 d.drj
+./d.drj
 
 # again, added by me, we are not really yet for the nvim pulgin
 

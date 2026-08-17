@@ -102,7 +102,6 @@ impl<'a> Parser<'a> {
                 self.advance();
                 self.expect(TokenType::Lparen)?;
                 let value = self.expect_expr()?;
-                //                let value = self.expect(TokenType::Nss)?;
                 self.expect(TokenType::Rparen)?;
                 self.ast.stmts.push(Stmt::Print(value))
             }
