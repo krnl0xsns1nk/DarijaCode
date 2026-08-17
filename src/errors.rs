@@ -1,6 +1,7 @@
-use crate::tokens::*;
+use crate::lexer::tokens::*;
 use std::fs::read_to_string;
 
+#[derive(Debug)]
 pub struct CompilerError {
     pub er: Er,
     pub span: Span,
@@ -46,11 +47,16 @@ pub fn show_err(filename: &str, err: CompilerError) {
     );
     eprintln!("  |");
     eprintln!("{} |{}", line_number, line);
-    eprintln!("  |\x1b[31m{}{}\x1b[0m", " ".repeat(column), "^".repeat(width));
+    eprintln!(
+        "  |\x1b[31m{}{}\x1b[0m",
+        " ".repeat(column),
+        "^".repeat(width)
+    );
 }
 
+#[derive(Debug)]
 pub enum Er {
-//    FileNotFound,
+    //    FileNotFound,
     UnknownSymbol,
     InvalidFloat,
     UnknownType,
@@ -66,7 +72,7 @@ pub enum Er {
 impl Er {
     pub fn code(&self) -> &'static str {
         match self {
-           // Self::FileNotFound => "DCE1",
+            // Self::FileNotFound => "DCE1",
             Self::UnknownSymbol => "DCE2",
             Self::InvalidFloat => "DCE3",
             Self::UnknownType => "DCE4",
@@ -82,7 +88,7 @@ impl Er {
     }
     pub fn title(&self) -> &'static str {
         match self {
-          //  Self::FileNotFound => "lmilf mkaynch, 7awl tchof mzyan",
+            //  Self::FileNotFound => "lmilf mkaynch, 7awl tchof mzyan",
             Self::UnknownSymbol => "had rramz mm3rofch 3ndna",
             Self::InvalidFloat => "hada machi ra9m m9ad",
             Self::UnknownType => "hada machi naw3 m3rof 3ndna",

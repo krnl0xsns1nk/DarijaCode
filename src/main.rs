@@ -1,14 +1,13 @@
 use std::env;
-mod ast;
+/*mod ast;
 mod bytecode;
 mod codegen;
 mod compiler;
 mod errors;
 mod lexer;
 mod parser;
-mod tokens;
-mod vm;
-use compiler::run;
+mod vm;*/
+use drj::compiler::run;
 
 #[cfg(not(debug_assertions))]
 fn hide_panics() {

@@ -1,5 +1,7 @@
 use crate::errors::*;
-use crate::tokens::*;
+use crate::lexer::tokens::*;
+
+pub mod tokens;
 
 pub struct Lexer {
     chars: Vec<char>,
@@ -27,7 +29,11 @@ impl Lexer {
         Ok(self.tokens.clone())
     }
     fn current(&self) -> char {
-        self.chars[self.pos]
+        if self.pos < self.chars.len() {
+            self.chars[self.pos]
+        } else {
+            '\0'
+        }
     }
     fn advance(&mut self) {
         self.pos += 1;
@@ -113,27 +119,34 @@ impl Lexer {
             value.push(self.current());
             self.advance();
         }
-        if self.current().is_ascii_digit() {
-            value.push(self.current());
-            self.advance();
-            let mut has_one_dot = false;
-            while self.current().is_ascii_digit() || self.current() == '.' {
-                if self.current() == '.' {
-                    if has_one_dot {
-                        break;
-                    }
-                    has_one_dot = true;
-                    value.push(self.current());
-                } else {
-                    value.push(self.current());
-                }
-                self.advance();
-            }
-        } else {
+        if !self.current().is_ascii_digit() {
             return Err(self.err(Er::InvalidFloat));
         }
+
+        while self.current().is_ascii_digit() {
+            value.push(self.current());
+            self.advance();
+        }
+        if self.current() != '.' {
+            return Err(self.err(Er::InvalidFloat));
+        }
+
+        value.push(self.current());
+        self.advance();
+
+        if !self.current().is_ascii_digit() {
+            return Err(self.err(Er::InvalidFloat));
+        }
+
+        value.push(self.current());
+        self.advance();
+
+        while self.current().is_ascii_digit() {
+            value.push(self.current());
+            self.advance();
+        }
+
         self.push(TokenType::Exr, value.clone());
-        value.clear();
         Ok(())
     }
     fn check_double(&mut self, type1: TokenType, type2: TokenType) {
@@ -305,10 +318,10 @@ impl Lexer {
                 self.check_next(TokenType::Bang, '=', TokenType::BangEqual);
             }
             '<' => {
-                self.check_next(TokenType::Greater, '=', TokenType::GtrE);
+                self.check_next(TokenType::Less, '=', TokenType::LessE);
             }
             '>' => {
-                self.check_next(TokenType::Less, '=', TokenType::LessE);
+                self.check_next(TokenType::Greater, '=', TokenType::GtrE);
             }
             _ => {
                 return Err(self.err(Er::UnknownSymbol));

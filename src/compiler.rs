@@ -2,9 +2,9 @@ use crate::ast::Program;
 use crate::bytecode::Instruction;
 use crate::codegen::compile;
 use crate::errors::*;
-use crate::lexer::Lexer;
+use crate::lexer::tokens::*;
+use crate::lexer::*;
 use crate::parser::Parser;
-use crate::tokens::*;
 use crate::vm::VM;
 use std::fs::read_to_string;
 

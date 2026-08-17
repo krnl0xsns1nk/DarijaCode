@@ -1,6 +1,6 @@
 use crate::ast::*;
 use crate::errors::*;
-use crate::tokens::*;
+use crate::lexer::tokens::*;
 
 pub struct Parser<'a> {
     tokens: &'a [Token],
@@ -126,9 +126,11 @@ impl<'a> Parser<'a> {
                         let value = self.expect_expr()?;
                         self.ast.stmts.push(Stmt::Assign { name: ident, value });
                     }
-                    _ => return Err(self
+                    _ => {
+                        return Err(self
                             .err(Er::NeedExpr)
-                            .info("tw93na chi w7da mn hado: ':' awla '='")),
+                            .info("tw93na chi w7da mn hado: ':' awla '='"));
+                    }
                 }
             }
             _ => return Err(self.err(Er::NeedStmt)),
