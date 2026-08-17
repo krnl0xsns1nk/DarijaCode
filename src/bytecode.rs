@@ -12,4 +12,10 @@ pub enum Instruction {
     // store && Load
     Store(String),
     Load(String),
+
+    // operations: 
+    Add,
+    Sub,
+    Mul,
+    Div,
 }

@@ -5,12 +5,12 @@ pub enum Expr {
     Float(f64),
     Ident(String),
     Mnt(bool),
-    /*
-        Binary {
+
+    Binary {
             left: Box<Expr>,
             op: BinaryOp,
             right: Box<Expr>,
-        }
+        },
 
     }
 
@@ -19,7 +19,7 @@ pub enum Expr {
         Add,
         Mul,
         Sub,
-        Div*/
+        Div
 }
 
 #[derive(Debug)]

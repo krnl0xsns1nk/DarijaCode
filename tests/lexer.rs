@@ -81,7 +81,7 @@ fn lex_single_and_comparison_operators() {
         .expect("valid operators should lex successfully");
 
     let expected = [
-        TokenType::Star,
+        TokenType::Mul,
         TokenType::Plus,
         TokenType::Minus,
         TokenType::What,

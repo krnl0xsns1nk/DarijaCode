@@ -1,13 +1,26 @@
 use crate::ast::*;
 use crate::bytecode::Instruction;
 
-fn compile_expr(expr: Expr) -> Instruction {
+fn compile_expr(code: &mut Vec<Instruction>, expr: Expr) {
     match expr {
-        Expr::String(value) => Instruction::PushString(value),
-        Expr::Number(value) => Instruction::PushInt(value),
-        Expr::Float(value) => Instruction::PushFloat(value),
-        Expr::Mnt(value) => Instruction::PushBool(value),
-        Expr::Ident(value) => Instruction::Load(value),
+        Expr::String(value) => code.push(Instruction::PushString(value)),
+        Expr::Number(value) => code.push(Instruction::PushInt(value)),
+        Expr::Float(value) => code.push(Instruction::PushFloat(value)),
+        Expr::Mnt(value) => code.push(Instruction::PushBool(value)),
+        Expr::Ident(value) => code.push(Instruction::Load(value)),
+        Expr::Binary{left, op, right } => {
+            compile_expr(code, *left);
+            compile_expr(code, *right);
+            code.push(push_op(op));
+        },
+    }
+}
+fn push_op(op: BinaryOp) -> Instruction {
+    match op {
+        BinaryOp::Add => Instruction::Add,
+        BinaryOp::Sub => Instruction::Sub,
+        BinaryOp::Mul => Instruction::Mul,
+        BinaryOp::Div => Instruction::Div,
     }
 }
 pub fn compile(program: Program) -> Vec<Instruction> {
@@ -16,31 +29,31 @@ pub fn compile(program: Program) -> Vec<Instruction> {
     for stmt in program.stmts {
         match stmt {
             Stmt::Print(expr) => {
-                code.push(compile_expr(expr));
+                compile_expr(&mut code, expr);
                 code.push(Instruction::Print);
             }
             Stmt::DeclarVar { name, type_, value } => match type_ {
                 Type::Nss => {
-                    code.push(compile_expr(value));
+                    compile_expr(&mut code, value);
                     code.push(Instruction::Store(name));
                 }
                 Type::Edd => {
-                    code.push(compile_expr(value));
+                    compile_expr(&mut code, value);
                     code.push(Instruction::Store(name));
                 }
                 Type::Exr => {
-                    code.push(compile_expr(value));
+                    compile_expr(&mut code, value);
                     code.push(Instruction::Store(name));
                 }
                 Type::Mnt => {
-                    code.push(compile_expr(value));
+                    compile_expr(&mut code, value);
                     code.push(Instruction::Store(name));
                 }
             },
             Stmt::Assign { name, value } => {
-                code.push(compile_expr(value));
+                compile_expr(&mut code, value);
                 code.push(Instruction::Store(name));
-            }
+            },
         }
     }
     code

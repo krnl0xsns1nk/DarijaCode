@@ -51,6 +51,57 @@ impl<'a> VM<'a> {
     fn get(&self, name: &str) -> Value {
         self.variables.get(name).cloned().unwrap()
     }
+    fn add(&mut self){
+        let v1 = self.pop();
+        let v2 = self.pop();
+        let v3 =match (v1, v2) {
+            (Value::Int(a), Value::Int(b)) => Value::Int(a + b),
+            (Value::Float(a), Value::Float(b)) => Value::Float(a + b),
+            (Value::Float(a), Value::Int(b)) => Value::Float(a + b as f64),
+            (Value::Int(a), Value::Float(b)) => Value::Float(a as f64 + b),
+            (Value::String(a), Value::String(b)) => Value::String(format!("{}{}", a, b)),
+            _ => panic!("\x1b[31m4alat[DVE1]\x1b[0m"),
+        };
+        self.push(v3);
+    }
+    fn sub(&mut self){
+        let right = self.pop();
+        let left = self.pop();
+        let v3 =match (left, right) {
+            (Value::Int(a), Value::Int(b)) => Value::Int(a - b),
+            (Value::Float(a), Value::Float(b)) => Value::Float(a - b),
+            (Value::Float(a), Value::Int(b)) => Value::Float(a - b as f64),
+            (Value::Int(a), Value::Float(b)) => Value::Float(a as f64 - b),
+            _ => panic!("\x1b[31m4alat[DVE1]\x1b[0m"),
+        };
+        self.push(v3);
+    }
+    fn mul(&mut self){
+        let right = self.pop();
+        let left = self.pop();
+        let v3 =match (left, right) {
+            (Value::Int(a), Value::Int(b)) => Value::Int(a * b),
+            (Value::Float(a), Value::Float(b)) => Value::Float(a * b),
+            (Value::Float(a), Value::Int(b)) => Value::Float(a * b as f64),
+            (Value::Int(a), Value::Float(b)) => Value::Float(a as f64 * b),
+            (Value::String(a), Value::Int(b)) => Value::String(format!("{}", a.repeat(b as usize))),
+            _ => panic!("\x1b[31m4alat[DVE1]\x1b[0m"),
+        };
+        self.push(v3);
+    }
+    // oh my html <div>
+    fn div(&mut self){
+        let right = self.pop();
+        let left = self.pop();
+        let v3 =match (left, right) {
+            (Value::Int(a), Value::Int(b)) => Value::Int(a / b),
+            (Value::Float(a), Value::Float(b)) => Value::Float(a / b),
+            (Value::Float(a), Value::Int(b)) => Value::Float(a / b as f64),
+            (Value::Int(a), Value::Float(b)) => Value::Float(a as f64 / b),
+            _ => panic!("\x1b[31m4alat[DVE1]\x1b[0m"),
+        };
+        self.push(v3);
+    }
     pub fn run(&mut self) {
         while self.ip < self.code.len() {
             match &self.code[self.ip] {
@@ -64,6 +115,10 @@ impl<'a> VM<'a> {
                 }
                 Instruction::Load(value) => self.push(self.get(value)),
                 Instruction::Print => println!("{}", self.pop()),
+                Instruction::Add => self.add(),
+                Instruction::Sub => self.sub(),
+                Instruction::Mul => self.mul(),
+                Instruction::Div => self.div(),
             }
             self.ip += 1;
         }

@@ -12,8 +12,7 @@ pub fn run(filename: &str) {
     let source = match read_to_string(filename) {
         Ok(source) => source,
         Err(_error) => {
-            eprintln!("ghalat[DCE1]:");
-            eprintln!("mal9inach had lmilf : '{}', 7awl tchof mzyan", filename);
+    eprintln!("\x1b[31m4alat[DCE1]\x1b[0m: mal9inach had lmilf --> '{}', 7awl tchof mzyan", filename);
             return;
         }
     };
@@ -36,10 +35,12 @@ pub fn run(filename: &str) {
             return;
         }
     };
-    // println!("{:#?}", ast);
+    println!("{:#?}", ast);
 
     let codegen: Vec<Instruction> = compile(ast);
-    // println!("{:#?}", codegen);
+
+    println!("{:#?}", codegen);
+
     let mut vm: VM = VM::new(&codegen);
     vm.run();
 }

@@ -284,7 +284,7 @@ impl Lexer {
                 self.read_string()?;
             }
             '*' => {
-                self.check_double(TokenType::Star, TokenType::Power);
+                self.check_double(TokenType::Mul, TokenType::Power);
             }
             '+' => {
                 self.check_double(TokenType::Plus, TokenType::PlusPlus);
