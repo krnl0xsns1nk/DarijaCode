@@ -11,7 +11,7 @@ pub struct Parser<'a> {
 impl<'a> Parser<'a> {
     pub fn new(tokens: &'a [Token]) -> Self {
         Self {
-            tokens: tokens,
+            tokens,
             pos: 0,
             ast: Program { stmts: Vec::new() },
         }
@@ -29,12 +29,11 @@ impl<'a> Parser<'a> {
         self.pos += 1;
     }
     fn err(&mut self, er: Er) -> CompilerError {
-        let e = CompilerError {
+        CompilerError {
             er,
             span: self.current(0).span.clone(),
             info: None,
-        };
-        return e;
+        }
     }
     fn expect(&mut self, expected: TokenType) -> Result<String, CompilerError> {
         if self.current(0).token_type != expected {
@@ -53,12 +52,11 @@ impl<'a> Parser<'a> {
             TokenType::ExrType => Ok(Type::Exr),
             TokenType::MntType => Ok(Type::Mnt),
             //            TokenType::Ident => Ok(self.current(0).value),  //custom typrs in the futur
-            _ => return Err(self.err(Er::UnknownType)),
+            _ => Err(self.err(Er::UnknownType)),
         }
     }
     fn expect_expr(&mut self) -> Result<Expr, CompilerError> {
         let mut tokens: Vec<Token> = Vec::new();
-        let first = self.current(0).clone();
         while self.current(0).token_type != TokenType::NewLine
             && self.current(0).token_type != TokenType::Eos
             && self.current(0).token_type != TokenType::Rparen
@@ -66,7 +64,7 @@ impl<'a> Parser<'a> {
             tokens.push(self.current(0).clone());
             self.advance();
         }
-        if tokens.len() < 1 {
+        if tokens.is_empty() {
             return Err(self.err(Er::NeedExpr));
         }
         if tokens.len() == 1 {
@@ -95,7 +93,7 @@ impl<'a> Parser<'a> {
             return Ok(expr);
         }
 
-        return Err(self.err(Er::ALotOfExpr));
+        Err(self.err(Er::ALotOfExpr))
     }
     fn scan(&mut self) -> Result<(), CompilerError> {
         match self.current(0).token_type {
@@ -128,11 +126,9 @@ impl<'a> Parser<'a> {
                         let value = self.expect_expr()?;
                         self.ast.stmts.push(Stmt::Assign { name: ident, value });
                     }
-                    _ => {
-                        return Err(self
+                    _ => return Err(self
                             .err(Er::NeedExpr)
-                            .info("tw93na chi w7da mn hado: ':' awla '='"));
-                    }
+                            .info("tw93na chi w7da mn hado: ':' awla '='")),
                 }
             }
             _ => return Err(self.err(Er::NeedStmt)),

@@ -32,10 +32,10 @@ impl Lexer {
     fn advance(&mut self) {
         self.pos += 1;
     }
-    fn push(&mut self, its_type: TokenType, its_value: String) {
+    fn push(&mut self, token_type: TokenType, value: String) {
         self.tokens.push(Token {
-            token_type: its_type,
-            value: its_value,
+            token_type,
+            value,
             span: Span {
                 start: self.start,
                 end: self.pos,
@@ -43,15 +43,14 @@ impl Lexer {
         });
     }
     fn err(&mut self, e: Er) -> CompilerError {
-        let err = CompilerError {
+        CompilerError {
             er: e,
             span: Span {
                 start: self.start,
                 end: self.pos,
             },
             info: None,
-        };
-        return err;
+        }
     }
     fn read_string(&mut self) -> Result<(), CompilerError> {
         let parent = self.current();
@@ -99,7 +98,7 @@ impl Lexer {
                     "la" => TokenType::Mnt(false),
                     _ => TokenType::Ident,
                 },
-                value: value,
+                value,
                 span: Span {
                     start: self.start,
                     end: self.pos,
@@ -138,8 +137,8 @@ impl Lexer {
         Ok(())
     }
     fn check_double(&mut self, type1: TokenType, type2: TokenType) {
-        let c = self.current().clone();
-        let c2 = self.chars[self.pos + 1].clone();
+        let c = self.current();
+        let c2 = self.chars[self.pos + 1];
         if c2 == c {
             let mut s = String::new();
             s.push(c);
@@ -167,8 +166,8 @@ impl Lexer {
         }
     }
     fn check_next(&mut self, type1: TokenType, cn: char, type2: TokenType) {
-        let c = self.current().clone();
-        let c2 = self.chars[self.pos + 1].clone();
+        let c = self.current();
+        let c2 = self.chars[self.pos + 1];
         if c2 == cn {
             let mut s = String::new();
             s.push(c);

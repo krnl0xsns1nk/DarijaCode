@@ -40,7 +40,7 @@ impl<'a> VM<'a> {
         }
     }
     fn pop(&mut self) -> Value {
-        return self.stack.pop().unwrap();
+        self.stack.pop().unwrap()
     }
     fn push(&mut self, v: Value) {
         self.stack.push(v)
@@ -49,7 +49,7 @@ impl<'a> VM<'a> {
         self.variables.insert(name.to_string(), v);
     }
     fn get(&self, name: &str) -> Value {
-        return self.variables.get(name).cloned().unwrap();
+        self.variables.get(name).cloned().unwrap()
     }
     pub fn run(&mut self) {
         while self.ip < self.code.len() {

@@ -24,6 +24,9 @@ pub fn show_err(filename: &str, err: CompilerError) {
     let line = src.lines().nth(line_number - 1).unwrap_or("");
     let line_start = before.rfind('\n').map(|pos| pos + 1).unwrap_or(0);
     let column = err.span.start - line_start;
+    let end_column = err.span.end - line_start;
+    let width = (end_column - column).max(1);
+
     let info = match err.info {
         Some(info) => format!(": {}", info),
         None => String::new(),
@@ -43,11 +46,11 @@ pub fn show_err(filename: &str, err: CompilerError) {
     );
     eprintln!("  |");
     eprintln!("{} |{}", line_number, line);
-    eprintln!("  |\x1b[31m{}^\x1b[0m", " ".repeat(column));
+    eprintln!("  |\x1b[31m{}{}\x1b[0m", " ".repeat(column), "^".repeat(width));
 }
 
 pub enum Er {
-    FileNotFound,
+//    FileNotFound,
     UnknownSymbol,
     InvalidFloat,
     UnknownType,
@@ -63,7 +66,7 @@ pub enum Er {
 impl Er {
     pub fn code(&self) -> &'static str {
         match self {
-            Self::FileNotFound => "DCE1",
+           // Self::FileNotFound => "DCE1",
             Self::UnknownSymbol => "DCE2",
             Self::InvalidFloat => "DCE3",
             Self::UnknownType => "DCE4",
@@ -79,7 +82,7 @@ impl Er {
     }
     pub fn title(&self) -> &'static str {
         match self {
-            Self::FileNotFound => "lmilf mkaynch, 7awl tchof mzyan",
+          //  Self::FileNotFound => "lmilf mkaynch, 7awl tchof mzyan",
             Self::UnknownSymbol => "had rramz mm3rofch 3ndna",
             Self::InvalidFloat => "hada machi ra9m m9ad",
             Self::UnknownType => "hada machi naw3 m3rof 3ndna",
