@@ -6,7 +6,7 @@ pub struct Lexer {
     tokens: Vec<Token>,
     pos: usize,
     start: usize,
-//    end: usize,
+    //    end: usize,
 }
 
 impl Lexer {
@@ -16,7 +16,7 @@ impl Lexer {
             tokens: Vec::new(),
             pos: 0,
             start: 0,
-//            end: 0,
+            //            end: 0,
         }
     }
 
@@ -49,7 +49,7 @@ impl Lexer {
                 start: self.start,
                 end: self.pos,
             },
-            info: None
+            info: None,
         };
         return err;
     }

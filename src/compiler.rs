@@ -36,10 +36,10 @@ pub fn run(filename: &str) {
             return;
         }
     };
-   // println!("{:#?}", ast);
+    // println!("{:#?}", ast);
 
     let codegen: Vec<Instruction> = compile(ast);
-   // println!("{:#?}", codegen);
+    // println!("{:#?}", codegen);
     let mut vm: VM = VM::new(&codegen);
     vm.run();
 }

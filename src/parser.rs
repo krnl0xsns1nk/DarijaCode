@@ -32,7 +32,7 @@ impl<'a> Parser<'a> {
         let e = CompilerError {
             er,
             span: self.current(0).span.clone(),
-            info: None
+            info: None,
         };
         return e;
     }
@@ -126,12 +126,13 @@ impl<'a> Parser<'a> {
                     TokenType::Equal => {
                         self.advance();
                         let value = self.expect_expr()?;
-                        self.ast.stmts.push(Stmt::Assign {
-                            name: ident,
-                            value,
-                        });
+                        self.ast.stmts.push(Stmt::Assign { name: ident, value });
                     }
-                    _ => return Err(self.err(Er::NeedExpr).info("tw93na chi w7da mn hado: ':' awla '='")),
+                    _ => {
+                        return Err(self
+                            .err(Er::NeedExpr)
+                            .info("tw93na chi w7da mn hado: ':' awla '='"));
+                    }
                 }
             }
             _ => return Err(self.err(Er::NeedStmt)),
