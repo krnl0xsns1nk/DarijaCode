@@ -1,4 +1,4 @@
-use super::{check_source, assert_err};
+use super::{assert_err, check_source};
 use drj::errors::Er;
 
 #[test]
@@ -9,8 +9,10 @@ fn valid_reassignment_passes() {
 
 #[test]
 fn assign_type_mismatch_fails() {
-    let result = check_source(r#"x : 3dd = 10
-x = "hi""#);
+    let result = check_source(
+        r#"x : 3dd = 10
+x = "hi""#,
+    );
     assert_err(result, Er::TypeMismatch);
 }
 

@@ -18,4 +18,7 @@ pub enum Instruction {
     Sub,
     Mul,
     Div,
+
+    // unary
+    Neg,
 }

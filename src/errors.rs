@@ -79,6 +79,7 @@ pub enum Er {
     DeclarDeclared,
     TypeMismatch,
     VariableNotDeclared,
+    MinusMulString,
 }
 impl Er {
     pub fn code(&self) -> &'static str {
@@ -99,6 +100,7 @@ impl Er {
             Self::DeclarDeclared => "DCE14",
             Self::TypeMismatch => "DCE15",
             Self::VariableNotDeclared => "DCE16",
+            Self::MinusMulString => "DCE17",
         }
     }
     pub fn title(&self) -> &'static str {
@@ -129,6 +131,7 @@ impl Er {
             Self::VariableNotDeclared => {
                 "maymknx tghyr 9ima dyal chi motaghayr mkaynch, 3rfo howa lwl"
             }
+            Self::MinusMulString => "maymknx tdrb nass f 3dd salib",
         }
     }
 }

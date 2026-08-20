@@ -14,14 +14,25 @@ pub enum ExprKind {
         op: BinaryOp,
         right: Box<Expr>,
     },
+
+    Unary {
+        op: UnaryOp,
+        value: Box<Expr>,
+    },
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub enum UnaryOp {
+    Neg,
+}
 pub type Expr = Spanned<ExprKind>;
+
 #[derive(Debug)]
 pub struct Spanned<T> {
     pub node: T,
     pub span: Span,
 }
+
 #[derive(Debug)]
 pub enum BinaryOp {
     Add,

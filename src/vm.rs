@@ -87,7 +87,18 @@ impl<'a> VM<'a> {
             (Value::Float(a), Value::Float(b)) => Value::Float(a * b),
             (Value::Float(a), Value::Int(b)) => Value::Float(a * b as f64),
             (Value::Int(a), Value::Float(b)) => Value::Float(a as f64 * b),
-            (Value::String(a), Value::Int(b)) => Value::String(a.repeat(b as usize).to_string()),
+            //        (Value::String(a), Value::Int(b)) => Value::String(a.repeat(b.max(0) as usize).to_string()),
+            (Value::String(a), Value::Int(b)) => {
+                let count = b;
+
+                if count < 0 {
+                    let reversed: String = a.chars().rev().collect();
+
+                    Value::String(reversed.repeat(count.unsigned_abs() as usize))
+                } else {
+                    Value::String(a.repeat(count as usize))
+                }
+            }
             _ => panic!("\x1b[31m4alat[DVE1]\x1b[0m"),
         };
         self.push(v3);
@@ -104,6 +115,18 @@ impl<'a> VM<'a> {
             _ => panic!("\x1b[31m4alat[DVE1]\x1b[0m"),
         };
         self.push(v3);
+    }
+    fn neg(&mut self) {
+        let value = self.pop();
+
+        let result = match value {
+            Value::Int(n) => Value::Int(-n),
+            Value::Float(n) => Value::Float(-n),
+
+            _ => unreachable!("Checker allowed invalid unary negation"),
+        };
+
+        self.push(result);
     }
     pub fn run(&mut self) {
         while self.ip < self.code.len() {
@@ -122,6 +145,7 @@ impl<'a> VM<'a> {
                 Instruction::Sub => self.sub(),
                 Instruction::Mul => self.mul(),
                 Instruction::Div => self.div(),
+                Instruction::Neg => self.neg(),
             }
             self.ip += 1;
         }

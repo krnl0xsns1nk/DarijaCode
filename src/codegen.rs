@@ -13,6 +13,15 @@ fn compile_expr(code: &mut Vec<Instruction>, expr: Expr) {
             compile_expr(code, *right);
             code.push(push_op(op));
         }
+        ExprKind::Unary { op, value } => {
+            compile_expr(code, *value);
+
+            match op {
+                UnaryOp::Neg => {
+                    code.push(Instruction::Neg);
+                }
+            }
+        }
     }
 }
 fn push_op(op: BinaryOp) -> Instruction {

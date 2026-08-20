@@ -101,9 +101,10 @@ impl<'a> Checker<'a> {
                         (Type::Exr, Type::Edd) => Ok(Type::Exr),
                         (Type::Exr, Type::Exr) => Ok(Type::Exr),
                         (Type::Nss, Type::Nss) => Ok(Type::Nss),
-                        _ => Err(self
-            .err(Er::TypeMismatch, expr.span.clone())
-            .info(format!("makayn9dch tjm3 '{}' m3a '{}'", left_type, right_type))),
+                        _ => Err(self.err(Er::TypeMismatch, expr.span.clone()).info(format!(
+                            "makayn9dch tjm3 '{}' m3a '{}'",
+                            left_type, right_type
+                        ))),
                     },
                     BinaryOp::Sub => match (&left_type, &right_type) {
                         (Type::Edd, Type::Edd) => Ok(Type::Edd),
@@ -125,6 +126,18 @@ impl<'a> Checker<'a> {
                         (Type::Edd, Type::Exr) => Ok(Type::Exr),
                         (Type::Exr, Type::Edd) => Ok(Type::Exr),
                         (Type::Exr, Type::Exr) => Ok(Type::Exr),
+                        _ => Err(self.err(Er::TypeMismatch, expr.span.clone())),
+                    },
+                }
+            }
+            ExprKind::Unary { op, value } => {
+                let typ = self.check_expr(value)?;
+
+                match op {
+                    UnaryOp::Neg => match typ {
+                        Type::Edd => Ok(Type::Edd),
+                        Type::Exr => Ok(Type::Exr),
+
                         _ => Err(self.err(Er::TypeMismatch, expr.span.clone())),
                     },
                 }

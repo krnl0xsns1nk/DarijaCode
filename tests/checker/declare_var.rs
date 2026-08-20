@@ -1,4 +1,4 @@
-use super::{check_source, assert_err};
+use super::{assert_err, check_source};
 use drj::errors::Er;
 
 #[test]

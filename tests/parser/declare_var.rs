@@ -23,4 +23,3 @@ fn declares_bool() {
     let ast = parse_source("x : mnt = ah");
     insta::assert_debug_snapshot!(ast);
 }
-

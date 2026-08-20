@@ -61,6 +61,25 @@ impl<'a> Parser<'a> {
     fn push0(&mut self, node: ExprKind, span: Span) -> Expr {
         Spanned { node, span }
     }
+    fn parse_unary(&mut self) -> Result<Expr, CompilerError> {
+        match self.current(0).token_type {
+            TokenType::Minus => {
+                let start = self.current(0).span.start;
+                self.advance();
+                let value = self.parse_unary()?;
+                let end = value.span.end;
+
+                Ok(self.push0(
+                    ExprKind::Unary {
+                        op: UnaryOp::Neg,
+                        value: Box::new(value),
+                    },
+                    Span { start, end },
+                ))
+            }
+            _ => self.parse_primary(),
+        }
+    }
     fn parse_primary(&mut self) -> Result<Expr, CompilerError> {
         match self.current(0).token_type {
             TokenType::Nss => {
@@ -150,7 +169,7 @@ impl<'a> Parser<'a> {
 
     fn parse_mul(&mut self) -> Result<Expr, CompilerError> {
         let start = self.current(0).span.start;
-        let mut left = self.parse_primary()?;
+        let mut left = self.parse_unary()?;
 
         loop {
             let op = match self.current(0).token_type {
@@ -160,7 +179,7 @@ impl<'a> Parser<'a> {
             };
             self.advance();
             let end = self.current(0).span.end;
-            let right = self.parse_primary()?;
+            let right = self.parse_unary()?;
             left = self.push0(
                 ExprKind::Binary {
                     left: Box::new(left),
