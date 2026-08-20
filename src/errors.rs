@@ -113,7 +113,7 @@ impl Er {
                 "had nass mamkmolch, khado isali bwahda mn hado: \" awla \' awla `, (bdakchi li bditi bih nnass dyalk)"
             }
             Self::NewLineString => {
-                "chi nass badi b \" maymknch irje3 lstr, so howa lwl awla st3ml: ` awla ' "
+                "chi nass badi b \" maymknch irje3 lstr, sdo howa lwl awla st3ml: ` awla ' "
             }
             Self::UnExpectedToken => {
                 "mknach mtw93in mnk had ramz/lklma, dir chi haja akhra awla chof fin kayn lmoxkil"

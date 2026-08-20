@@ -73,13 +73,13 @@ impl Lexer {
         let mut value = String::new();
         while self.pos < self.chars.len() && self.current() != parent {
             if self.current() == '\n' && parent == '"' {
-                return Err(self.err(Er::UnCompletString));
+                return Err(self.err(Er::NewLineString));
             }
             value.push(self.current());
             self.advance();
         }
         if self.pos >= self.chars.len() && self.chars[self.pos - 1] != parent {
-            return Err(self.err(Er::NewLineString));
+            return Err(self.err(Er::UnCompletString));
         }
         self.push(TokenType::Nss, value.clone());
         value.clear();
