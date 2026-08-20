@@ -1,5 +1,6 @@
 use crate::ast::Program;
 use crate::bytecode::Instruction;
+use crate::checker::*;
 use crate::codegen::compile;
 use crate::errors::*;
 use crate::lexer::tokens::*;
@@ -12,7 +13,10 @@ pub fn run(filename: &str) {
     let source = match read_to_string(filename) {
         Ok(source) => source,
         Err(_error) => {
-    eprintln!("\x1b[31m4alat[DCE1]\x1b[0m: mal9inach had lmilf --> '{}', 7awl tchof mzyan", filename);
+            eprintln!(
+                "\x1b[31m4alat[DCE1]\x1b[0m: mal9inach had lmilf --> '{}', 7awl tchof mzyan",
+                filename
+            );
             return;
         }
     };
@@ -25,7 +29,7 @@ pub fn run(filename: &str) {
             return;
         }
     };
-    //println!("{:#?}", tokens);
+    // println!("{:#?}", tokens);
 
     let parser: Parser = Parser::new(&tokens);
     let ast: Program = match parser.run() {
@@ -35,11 +39,20 @@ pub fn run(filename: &str) {
             return;
         }
     };
-    println!("{:#?}", ast);
+    //    println!("{:#?}", ast);
+
+    let mut check: Checker = Checker::new(&ast);
+    match check.run() {
+        Ok(_) => {}
+        Err(err) => {
+            show_err(filename, err);
+            return;
+        }
+    }
 
     let codegen: Vec<Instruction> = compile(ast);
 
-    println!("{:#?}", codegen);
+    //println!("{:#?}", codegen);
 
     let mut vm: VM = VM::new(&codegen);
     vm.run();

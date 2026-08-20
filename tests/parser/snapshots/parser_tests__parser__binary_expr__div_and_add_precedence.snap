@@ -1,0 +1,108 @@
+---
+source: tests/parser/binary_expr.rs
+expression: ast
+---
+Program {
+    stmts: [
+        DeclarVar {
+            name: Ident {
+                name: "x",
+                span: Span {
+                    start: 0,
+                    end: 1,
+                },
+            },
+            type_: Some(
+                TypeName {
+                    name: "3xr",
+                    type_: Exr,
+                    span: Span {
+                        start: 4,
+                        end: 7,
+                    },
+                },
+            ),
+            value: Spanned {
+                node: Binary {
+                    left: Spanned {
+                        node: Binary {
+                            left: Spanned {
+                                node: Number(
+                                    10,
+                                ),
+                                span: Span {
+                                    start: 10,
+                                    end: 12,
+                                },
+                            },
+                            op: Div,
+                            right: Spanned {
+                                node: Number(
+                                    5,
+                                ),
+                                span: Span {
+                                    start: 15,
+                                    end: 16,
+                                },
+                            },
+                        },
+                        span: Span {
+                            start: 10,
+                            end: 16,
+                        },
+                    },
+                    op: Add,
+                    right: Spanned {
+                        node: Binary {
+                            left: Spanned {
+                                node: Binary {
+                                    left: Spanned {
+                                        node: Number(
+                                            1,
+                                        ),
+                                        span: Span {
+                                            start: 19,
+                                            end: 20,
+                                        },
+                                    },
+                                    op: Mul,
+                                    right: Spanned {
+                                        node: Number(
+                                            90,
+                                        ),
+                                        span: Span {
+                                            start: 23,
+                                            end: 25,
+                                        },
+                                    },
+                                },
+                                span: Span {
+                                    start: 19,
+                                    end: 25,
+                                },
+                            },
+                            op: Div,
+                            right: Spanned {
+                                node: Number(
+                                    2,
+                                ),
+                                span: Span {
+                                    start: 28,
+                                    end: 29,
+                                },
+                            },
+                        },
+                        span: Span {
+                            start: 19,
+                            end: 29,
+                        },
+                    },
+                },
+                span: Span {
+                    start: 10,
+                    end: 29,
+                },
+            },
+        },
+    ],
+}

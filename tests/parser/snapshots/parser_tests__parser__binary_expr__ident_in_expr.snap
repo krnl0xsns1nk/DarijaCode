@@ -1,0 +1,88 @@
+---
+source: tests/parser/binary_expr.rs
+expression: ast
+---
+Program {
+    stmts: [
+        DeclarVar {
+            name: Ident {
+                name: "y",
+                span: Span {
+                    start: 0,
+                    end: 1,
+                },
+            },
+            type_: Some(
+                TypeName {
+                    name: "3dd",
+                    type_: Edd,
+                    span: Span {
+                        start: 4,
+                        end: 7,
+                    },
+                },
+            ),
+            value: Spanned {
+                node: Number(
+                    5,
+                ),
+                span: Span {
+                    start: 10,
+                    end: 11,
+                },
+            },
+        },
+        DeclarVar {
+            name: Ident {
+                name: "x",
+                span: Span {
+                    start: 12,
+                    end: 13,
+                },
+            },
+            type_: Some(
+                TypeName {
+                    name: "3dd",
+                    type_: Edd,
+                    span: Span {
+                        start: 16,
+                        end: 19,
+                    },
+                },
+            ),
+            value: Spanned {
+                node: Binary {
+                    left: Spanned {
+                        node: Ident(
+                            Ident {
+                                name: "y",
+                                span: Span {
+                                    start: 22,
+                                    end: 23,
+                                },
+                            },
+                        ),
+                        span: Span {
+                            start: 22,
+                            end: 23,
+                        },
+                    },
+                    op: Add,
+                    right: Spanned {
+                        node: Number(
+                            1,
+                        ),
+                        span: Span {
+                            start: 26,
+                            end: 27,
+                        },
+                    },
+                },
+                span: Span {
+                    start: 22,
+                    end: 27,
+                },
+            },
+        },
+    ],
+}

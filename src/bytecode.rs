@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Instruction {
     // print
     Print,
@@ -13,7 +13,7 @@ pub enum Instruction {
     Store(String),
     Load(String),
 
-    // operations: 
+    // operations:
     Add,
     Sub,
     Mul,

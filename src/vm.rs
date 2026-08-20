@@ -8,15 +8,18 @@ impl fmt::Display for Value {
             Value::String(value) => write!(f, "{}", value),
             Value::Int(value) => write!(f, "{}", value),
             Value::Float(value) => write!(f, "{}", value),
-            Value::Bool(value) => write!(f, "{}", value),
+            Value::Bool(value) => match value {
+                true => write!(f, "ah"),
+                false => write!(f, "la"),
+            },
         }
         .expect("ops");
         Ok(())
     }
 }
 
-#[derive(Debug, Clone)]
-enum Value {
+#[derive(Debug, Clone, PartialEq)]
+pub enum Value {
     String(String),
     Int(i64),
     Float(f64),
@@ -48,13 +51,13 @@ impl<'a> VM<'a> {
     fn insert(&mut self, name: &str, v: Value) {
         self.variables.insert(name.to_string(), v);
     }
-    fn get(&self, name: &str) -> Value {
+    pub fn get(&self, name: &str) -> Value {
         self.variables.get(name).cloned().unwrap()
     }
-    fn add(&mut self){
-        let v1 = self.pop();
-        let v2 = self.pop();
-        let v3 =match (v1, v2) {
+    fn add(&mut self) {
+        let right = self.pop();
+        let left = self.pop();
+        let v3 = match (left, right) {
             (Value::Int(a), Value::Int(b)) => Value::Int(a + b),
             (Value::Float(a), Value::Float(b)) => Value::Float(a + b),
             (Value::Float(a), Value::Int(b)) => Value::Float(a + b as f64),
@@ -64,10 +67,10 @@ impl<'a> VM<'a> {
         };
         self.push(v3);
     }
-    fn sub(&mut self){
+    fn sub(&mut self) {
         let right = self.pop();
         let left = self.pop();
-        let v3 =match (left, right) {
+        let v3 = match (left, right) {
             (Value::Int(a), Value::Int(b)) => Value::Int(a - b),
             (Value::Float(a), Value::Float(b)) => Value::Float(a - b),
             (Value::Float(a), Value::Int(b)) => Value::Float(a - b as f64),
@@ -76,25 +79,25 @@ impl<'a> VM<'a> {
         };
         self.push(v3);
     }
-    fn mul(&mut self){
+    fn mul(&mut self) {
         let right = self.pop();
         let left = self.pop();
-        let v3 =match (left, right) {
+        let v3 = match (left, right) {
             (Value::Int(a), Value::Int(b)) => Value::Int(a * b),
             (Value::Float(a), Value::Float(b)) => Value::Float(a * b),
             (Value::Float(a), Value::Int(b)) => Value::Float(a * b as f64),
             (Value::Int(a), Value::Float(b)) => Value::Float(a as f64 * b),
-            (Value::String(a), Value::Int(b)) => Value::String(format!("{}", a.repeat(b as usize))),
+            (Value::String(a), Value::Int(b)) => Value::String(a.repeat(b as usize).to_string()),
             _ => panic!("\x1b[31m4alat[DVE1]\x1b[0m"),
         };
         self.push(v3);
     }
     // oh my html <div>
-    fn div(&mut self){
+    fn div(&mut self) {
         let right = self.pop();
         let left = self.pop();
-        let v3 =match (left, right) {
-            (Value::Int(a), Value::Int(b)) => Value::Int(a / b),
+        let v3 = match (left, right) {
+            (Value::Int(a), Value::Int(b)) => Value::Float(a as f64 / b as f64),
             (Value::Float(a), Value::Float(b)) => Value::Float(a / b),
             (Value::Float(a), Value::Int(b)) => Value::Float(a / b as f64),
             (Value::Int(a), Value::Float(b)) => Value::Float(a as f64 / b),

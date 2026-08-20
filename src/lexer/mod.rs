@@ -26,6 +26,15 @@ impl Lexer {
         while self.pos < self.chars.len() {
             self.scan()?;
         }
+        // at the end of your lexer's run()
+        self.tokens.push(Token {
+            token_type: TokenType::Eof,
+            value: "nihayat lmilf".to_string(),
+            span: Span {
+                start: self.pos,
+                end: self.pos,
+            },
+        });
         Ok(self.tokens.clone())
     }
     fn current(&self) -> char {
@@ -255,11 +264,11 @@ impl Lexer {
             '}' => {
                 self.push(TokenType::QRbrack, self.current().to_string());
                 self.advance()
-            }
+            } /*
             ':' => {
-                self.push(TokenType::Colon, self.current().to_string());
-                self.advance()
-            }
+            self.push(TokenType::Colon, self.current().to_string());
+            self.advance()
+            }*/
             '×' => {
                 self.push(TokenType::Mul, self.current().to_string());
                 self.advance()
@@ -313,6 +322,9 @@ impl Lexer {
             }
             '~' => {
                 self.read_float()?;
+            }
+            ':' => {
+                self.check_next(TokenType::Colon, '=', TokenType::ColonEqual);
             }
             '!' => {
                 self.check_next(TokenType::Bang, '=', TokenType::BangEqual);

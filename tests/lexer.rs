@@ -1,5 +1,5 @@
-use drj::lexer::*;
 use drj::lexer::tokens::*;
+use drj::lexer::*;
 
 #[test]
 fn lex_success() {

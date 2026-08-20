@@ -1,4 +1,5 @@
 use crate::lexer::tokens::*;
+use colored::Colorize;
 use std::fs::read_to_string;
 
 #[derive(Debug)]
@@ -21,7 +22,12 @@ pub fn show_err(filename: &str, err: CompilerError) {
     };
 
     let before = &src[..err.span.start];
-    let line_number = before.lines().count();
+    let line_number = src[..err.span.start]
+        .bytes()
+        .filter(|&byte| byte == b'\n')
+        .count()
+        + 1;
+    //    let line_number = before.lines().count();
     let line = src.lines().nth(line_number - 1).unwrap_or("");
     let line_start = before.rfind('\n').map(|pos| pos + 1).unwrap_or(0);
     let column = err.span.start - line_start;
@@ -34,27 +40,28 @@ pub fn show_err(filename: &str, err: CompilerError) {
     };
 
     eprintln!(
-        "\x1b[2m---> \x1b[0m\x1b[4m\x1b[96m{}\x1b[0m:\x1b[2m{}:{}\x1b[0m",
-        filename,
-        line_number,
-        column + 1
+        "{}{}:{}:{}",
+        "---> ".bright_black(),
+        filename.cyan().bold().underline(),
+        line_number.to_string().bright_black(),
+        (column + 1).to_string().bright_black()
     );
     eprintln!(
-        "\x1b[31m4alat[{}]\x1b[0m: {}{}",
-        err.er.code(),
+        "{}: {}{}",
+        format!("4alat[{}]", err.er.code()).red().bold(),
         err.er.title(),
         info
     );
     eprintln!("  |");
-    eprintln!("{} |{}", line_number, line);
+    eprintln!("{} |{}", line_number.to_string().bright_cyan(), line);
     eprintln!(
-        "  |\x1b[31m{}{}\x1b[0m",
+        "  |{}{}",
         " ".repeat(column),
-        "^".repeat(width)
+        "^".repeat(width).red().bold()
     );
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Er {
     //    FileNotFound,
     UnknownSymbol,
@@ -68,6 +75,10 @@ pub enum Er {
     InvalidValue,
     ALotOfExpr,
     NeedStmt,
+    UnknownVariable,
+    DeclarDeclared,
+    TypeMismatch,
+    VariableNotDeclared,
 }
 impl Er {
     pub fn code(&self) -> &'static str {
@@ -84,13 +95,17 @@ impl Er {
             Self::InvalidValue => "DCE10",
             Self::ALotOfExpr => "DCE11",
             Self::NeedStmt => "DCE12",
+            Self::UnknownVariable => "DCE13",
+            Self::DeclarDeclared => "DCE14",
+            Self::TypeMismatch => "DCE15",
+            Self::VariableNotDeclared => "DCE16",
         }
     }
     pub fn title(&self) -> &'static str {
         match self {
             //  Self::FileNotFound => "lmilf mkaynch, 7awl tchof mzyan",
             Self::UnknownSymbol => "had rramz mm3rofch 3ndna",
-            Self::InvalidFloat => "hada machi ra9m m9ad",
+            Self::InvalidFloat => "hada machi 3dd 3achari m9ad",
             Self::UnknownType => "hada machi naw3 m3rof 3ndna",
             Self::UnCompletString => {
                 "had nass mamkmolch, khado isali bwahda mn hado: \" awla \' awla `, (bdakchi li bditi bih nnass dyalk)"
@@ -108,6 +123,12 @@ impl Er {
             }
             Self::ALotOfExpr => "drti bzaf dyal ta3abir ldarajat hadchi mmsmo7x",
             Self::NeedStmt => "na9sk chi t3lima awla 2mr barmaji s7i7",
+            Self::UnknownVariable => "had lmotaghayr mma3rofch, 7awl t3rfo howa lwl",
+            Self::DeclarDeclared => "chi motaghayr dija m3arf maymknch t3awd t3arfo",
+            Self::TypeMismatch => "naw3 dyal had ta3bir mkaywaf9ch nnaw3 li drtih nta",
+            Self::VariableNotDeclared => {
+                "maymknx tghyr 9ima dyal chi motaghayr mkaynch, 3rfo howa lwl"
+            }
         }
     }
 }

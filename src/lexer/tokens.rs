@@ -2,8 +2,10 @@
 pub enum TokenType {
     Ident,
 
-    // \n
+    // separators
     NewLine,
+    Eos,
+    Eof,
 
     // symbols -_-
     Plus,
@@ -12,6 +14,7 @@ pub enum TokenType {
     Equal,
     Power,
     EqualEqual,
+    ColonEqual,
     Minus,
     Bang,
     BangEqual,
@@ -26,7 +29,6 @@ pub enum TokenType {
     What,
     WhatWhat,
     Comma,
-    Eos,
     Colon,
     Hash,
     Or,
